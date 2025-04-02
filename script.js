@@ -8,10 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // ****** 請務必替換成您自己的 LIFF ID ******
     const myLiffId = "2007188640-8vEWkonp";
     // ****** 請務必替換成您未來後端接收簽名+收據資料的 API 網址 ******
-    const submitApiUrl = "https://bb64-111-249-19-98.ngrok-free.app/api/submit-receipt";
+    const submitApiUrl = "https://line-liff-receipt-backend.onrender.com/api/submit-receipt";
     // ****** 請務必替換成您未來後端提供收據資料的 API 基礎網址 ******
     // 注意：後面的 /${id} 會在 fetchReceiptData 函式中加上
-    const getReceiptApiBaseUrl = "https://bb64-111-249-19-98.ngrok-free.app/api/receipts";
+    const getReceiptApiBaseUrl = "https://line-liff-receipt-backend.onrender.com/api/receipts";
 
     // --- 獲取 DOM 元素 ---
     const canvas = document.getElementById('signature-canvas');
