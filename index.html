@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訂金收據簽名</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>訂金收據</h1>
+
+    <div id="receipt-info">
+        <p><strong>客戶名稱:</strong> <span id="customer-name">載入中...</span></p>
+        <p><strong>金額:</strong> <span id="amount">載入中...</span></p>
+        <p><strong>事由:</strong> <span id="description">載入中...</span></p>
+        <p><strong>收據ID:</strong> <span id="receipt-id"></span></p>
+    </div>
+
+    <hr>
+
+    <h2>客戶簽名:</h2>
+    <div class="signature-pad-container">
+        <canvas id="signature-canvas"></canvas>
+    </div>
+
+    <div>
+        <button id="clear-button">清除簽名</button>
+        <button id="confirm-button">確認簽名並送出</button>
+    </div>
+
+    <p id="status-message"></p>
+
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="signature_pad.umd.min.js"></script> <script src="script.js"></script>
+
+</body>
+</html>
