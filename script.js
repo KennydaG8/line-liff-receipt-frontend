@@ -128,6 +128,18 @@ document.addEventListener('DOMContentLoaded', () => {
              return;
         }
 
+        // *** 新增：檢查條款 Checkbox 是否都已勾選 ***
+        const term4Checked = document.getElementById('term4-agree').checked;
+        const term5Checked = document.getElementById('term5-agree').checked;
+        const term6Checked = document.getElementById('term6-agree').checked;
+        const term7Checked = document.getElementById('term7-agree').checked;
+
+        if (!term4Checked || !term5Checked || !term6Checked || !term7Checked) {
+            alert("請勾選同意所有條款 (項目 4、5、6、7) 後再提交！");
+            return; // 如果有任何一項未勾選，停止提交
+        }
+        // *** 檢查結束 ***
+
         statusMessage.textContent = "正在處理並提交簽名...";
         confirmButton.disabled = true;
         clearButton.disabled = true;
@@ -142,6 +154,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 // logoFileId: currentLogoFileId, // 暫時不傳 Logo ID
                 pdfSaveFolderId: currentSaveFolderId, // 傳送 Folder ID
                 submittedAt: new Date().toISOString(),
+                // 可選：如果後端要記錄同意狀態，可以加入
+                termsAgreed: {
+                   term4: term4Checked,
+                   term5: term5Checked,
+                   term6: term6Checked,
+                   term7: term7Checked,
+                   }
             };
 
             console.log("準備發送到後端的 Payload:", JSON.stringify(payload));

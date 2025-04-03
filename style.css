@@ -95,3 +95,24 @@ div > button { /* 選取作為 div 直接子元素的 button */
     text-align: center; /* 文字置中 */
     min-height: 1.6em; /* 預留空間避免跳動 */
 }
+
+.terms-section ol {
+    list-style: none; /* 移除預設的數字標號 (因為我們手動寫了) */
+    padding-left: 5px; /* 調整左邊距 */
+}
+
+.terms-section li {
+    margin-bottom: 10px; /* 增加列表項之間的間距 */
+    display: flex; /* 使用 Flexbox 來對齊 checkbox 和 label */
+    align-items: flex-start; /* 垂直對齊 (頂部對齊) */
+}
+
+.terms-section input[type="checkbox"] {
+    margin-right: 8px; /* checkbox 和文字之間的間距 */
+    margin-top: 2px; /* 稍微往下調一點對齊文字 */
+    flex-shrink: 0; /* 防止 checkbox 在空間不足時被壓縮 */
+}
+
+.terms-section label {
+    cursor: pointer; /* 讓 label 也有點擊指標 */
+}
