@@ -77,6 +77,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function initializeSignaturePad() {
         // ... (初始化 SignaturePad 的程式碼不變) ...
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+        signaturePad = new SignaturePad(canvas, { /* ...options... */ });
+        clearButton.addEventListener('click', () => { /* ... */ });
+        confirmButton.addEventListener('click', handleSubmitSignature);
+        window.addEventListener('resize', resizeCanvas);
+        console.log("Signature Pad initialized.");
     }
 
     async function handleSubmitSignature() {
