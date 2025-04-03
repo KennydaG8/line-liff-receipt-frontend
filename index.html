@@ -7,18 +7,30 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>訂金收據</h1>
+    <h1>訂金資訊填寫與簽署</h1>
 
     <div id="receipt-info">
-        <p><strong>客戶名稱:</strong> <span id="customer-name">載入中...</span></p>
-        <p><strong>金額:</strong> <span id="amount">載入中...</span></p>
-        <p><strong>事由:</strong> <span id="description">載入中...</span></p>
-        <p><strong>收據ID:</strong> <span id="receipt-id"></span></p>
+        <p>
+            <label for="rep-company-name">您的公司/單位名稱 (業務填寫)：</label><br>
+            <input type="text" id="rep-company-name" name="rep-company-name" required>
+        </p>
+        <hr> <p><strong>--- 以下由客戶填寫 ---</strong></p>
+        <p>
+            <label for="customer-name">姓名/聯絡人：</label><br>
+            <input type="text" id="customer-name" name="customer-name" required>
+        </p>
+        <p>
+            <label for="amount">訂金金額：</label><br>
+            <input type="text" id="amount" name="amount" required>
+        </p>
+        <p>
+            <label for="description">事由/備註：</label><br>
+            <textarea id="description" name="description" rows="3" required></textarea>
+        </p>
     </div>
-
     <hr>
 
-    <h2>客戶簽名:</h2>
+    <h2>客戶簽名確認:</h2>
     <div class="signature-pad-container">
         <canvas id="signature-canvas"></canvas>
     </div>

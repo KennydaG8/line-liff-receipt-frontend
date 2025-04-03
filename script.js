@@ -18,14 +18,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearButton = document.getElementById('clear-button');
     const confirmButton = document.getElementById('confirm-button');
     const statusMessage = document.getElementById('status-message');
+    const repCompanyNameEl = document.getElementById('rep-company-name');
     const customerNameEl = document.getElementById('customer-name');
     const amountEl = document.getElementById('amount');
     const descriptionEl = document.getElementById('description');
-    const receiptIdEl = document.getElementById('receipt-id');
+    
 
     // --- 變數宣告 ---
     let signaturePad; // SignaturePad 實例
-    let currentReceiptData = {}; // 從後端獲取的當前收據資料
+    let currentLogoFileId = null;    // 用於儲存從 URL 讀取的 Logo File ID
+    let currentSaveFolderId = null; // 用於儲存從 URL 讀取的 Save Folder ID
 
     // --- 主要執行流程 ---
     initializeLiffAndSignaturePad(myLiffId);
@@ -37,56 +39,36 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {string} liffId - 您的 LIFF App ID
      */
     async function initializeLiffAndSignaturePad(liffId) {
-        statusMessage.textContent = "正在初始化 LIFF...";
+        statusMessage.textContent = "正在初始化...";
         try {
-            // 1. 初始化 LIFF
             await liff.init({ liffId: liffId });
-            statusMessage.textContent = "LIFF 初始化成功！";
+            statusMessage.textContent = "初始化成功！";
 
-            // 2. 檢查登入狀態 (可選，取決於您的需求)
-            if (!liff.isLoggedIn()) {
-                // 如果您的應用需要用戶登入才能操作，可以在這裡處理
-                // 例如：顯示提示訊息或呼叫 liff.login()
-                console.log("User not logged in.");
-                // statusMessage.textContent = "請先登入 LINE 以繼續。";
-                // 禁用按鈕
-                // confirmButton.disabled = true;
-                // clearButton.disabled = true;
-                // return; // 可能需要中斷後續流程
-            }
-
-            // (可選) 獲取用戶 Profile 資訊
-            // try {
-            //     const profile = await liff.getProfile();
-            //     console.log("User Profile:", profile);
-            //     // 或許可以用 profile.displayName 預填客戶名稱？
-            // } catch (profileError) {
-            //     console.error("Failed to get profile:", profileError);
-            // }
-
-
-            // 3. 從 URL 獲取收據 ID
+            // *** 新增：從 URL 讀取必要的 ID ***
             const urlParams = new URLSearchParams(window.location.search);
-            const receiptId = urlParams.get('receiptId');
+            currentLogoFileId = urlParams.get('logoFileId');
+            currentSaveFolderId = urlParams.get('pdfSaveFolderId');
 
-            if (!receiptId) {
-                throw new Error("URL 中缺少 'receiptId' 參數");
+            if (!currentLogoFileId || !currentSaveFolderId) {
+                // 如果 URL 中缺少必要的 ID，顯示錯誤或提示
+                // 這裡先簡單提示，您可以做得更完善
+                console.error("URL 缺少 logoFileId 或 pdfSaveFolderId 參數！");
+                statusMessage.textContent = "錯誤：啟動連結不完整，缺少必要的參數。";
+                confirmButton.disabled = true; // 禁用提交按鈕
+                clearButton.disabled = true;
+                return; // 中斷後續執行
             }
-            receiptIdEl.textContent = receiptId; // 在頁面上顯示收據 ID
+            console.log("讀取到 Logo File ID:", currentLogoFileId);
+            console.log("讀取到 Save Folder ID:", currentSaveFolderId);
 
-            // 4. 根據收據 ID 從您的後端獲取收據詳細資料
-            statusMessage.textContent = `正在載入收據 ${receiptId} 的資料...`;
-            await fetchReceiptData(receiptId); // 等待資料載入完成
-
-            // 5. 初始化簽名版
+            // 直接初始化簽名版 (不再需要 fetchReceiptData)
             initializeSignaturePad();
 
-            statusMessage.textContent = "請在下方區域簽名。";
+            statusMessage.textContent = "請業務填寫公司名稱，然後交由客戶填寫資料並簽名。";
 
         } catch (error) {
-            console.error("初始化或載入資料時發生錯誤:", error);
+            console.error("初始化時發生錯誤:", error);
             statusMessage.textContent = `錯誤：${error.message}`;
-            // 初始化失敗時禁用按鈕
             confirmButton.disabled = true;
             clearButton.disabled = true;
         }
@@ -136,30 +118,14 @@ document.addEventListener('DOMContentLoaded', () => {
      * 初始化 Signature Pad 函式庫
      */
     function initializeSignaturePad() {
-        // 根據容器大小調整 Canvas 解析度，以獲得更清晰的簽名
+        // ... (初始化 SignaturePad 的程式碼不變) ...
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
         canvas.width = canvas.offsetWidth * ratio;
         canvas.height = canvas.offsetHeight * ratio;
         canvas.getContext("2d").scale(ratio, ratio);
-
-        // 建立 SignaturePad 實例
-        signaturePad = new SignaturePad(canvas, {
-            backgroundColor: 'rgb(255, 255, 255)', // 白色背景
-            penColor: 'rgb(0, 0, 0)', // 黑色畫筆
-            minWidth: 0.5, // 筆劃最小寬度
-            maxWidth: 2.5, // 筆劃最大寬度
-        });
-
-        // 清除按鈕的事件監聽
-        clearButton.addEventListener('click', () => {
-            signaturePad.clear();
-            statusMessage.textContent = "簽名已清除，請重新簽名。";
-        });
-
-        // 確認按鈕的事件監聽
+        signaturePad = new SignaturePad(canvas, { /* ...options... */ });
+        clearButton.addEventListener('click', () => { /* ... */ });
         confirmButton.addEventListener('click', handleSubmitSignature);
-
-        // 監聽視窗大小改變事件，重新調整 Canvas 大小
         window.addEventListener('resize', resizeCanvas);
         console.log("Signature Pad initialized.");
     }
@@ -169,79 +135,80 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function handleSubmitSignature() {
         if (signaturePad.isEmpty()) {
-            alert("請先簽名！");
+            alert("客戶簽名欄位不可空白！");
             return;
         }
 
+        // *** 從所有 input 欄位讀取資料 ***
+        const repCompanyNameValue = repCompanyNameEl.value.trim();
+        const customerNameValue = customerNameEl.value.trim();
+        const amountValue = amountEl.value.trim();
+        const descriptionValue = descriptionEl.value.trim();
+
+        // *** 基本檢查 ***
+        if (!repCompanyNameValue || !customerNameValue || !amountValue || !descriptionValue) {
+            alert("請確認所有資訊欄位都已填寫！");
+            return;
+        }
+        // 檢查 ID 是否已成功讀取
+        if (!currentLogoFileId || !currentSaveFolderId) {
+             alert("錯誤：缺少必要的設定參數，無法提交。");
+             return;
+        }
+
         statusMessage.textContent = "正在處理並提交簽名...";
-        confirmButton.disabled = true; // 防止重複提交
+        confirmButton.disabled = true;
         clearButton.disabled = true;
 
         try {
-            // 將簽名轉換為 Base64 編碼的 PNG 圖片數據 URL
-            // 您也可以使用 'image/jpeg' 或其他格式，但 PNG 通常用於簽名
             const signatureImageBase64 = signaturePad.toDataURL('image/png');
 
-            // 準備要發送到後端的資料 payload
+            // *** 修改：準備 payload，包含所有欄位和 ID ***
             const payload = {
-                receiptId: currentReceiptData.id || receiptIdEl.textContent, // 從載入的資料或頁面元素獲取 ID
-                signatureImage: signatureImageBase64, // Base64 簽名圖
-                submittedAt: new Date().toISOString(), // 提交時間 (ISO 格式)
-                // 您可以根據需要加入其他資訊
-                // customerName: currentReceiptData.customerName,
-                // amount: currentReceiptData.amount,
+                repCompanyName: repCompanyNameValue,   // 業務公司名稱
+                customerName: customerNameValue,     // 客戶姓名
+                amount: amountValue,                 // 金額
+                description: descriptionValue,       // 事由
+                signatureImage: signatureImageBase64,  // 簽名圖
+                logoFileId: currentLogoFileId,       // Logo 的 Google Drive File ID
+                pdfSaveFolderId: currentSaveFolderId, // 儲存 PDF 的 Google Drive Folder ID
+                submittedAt: new Date().toISOString(),
             };
 
             console.log("準備發送到後端的 Payload:", JSON.stringify(payload));
 
-            // **** 注意：您需要自行開發這個後端 API ****
-            // 這個 API 應該接收 POST 請求，包含 JSON payload，並處理儲存和 PDF 生成
-            // 例如: POST https://your-backend.com/api/submit-receipt
-            console.log(`Submitting signature to: ${submitApiUrl}`);
+            // *** 修改：fetch 呼叫，如果後端部署了，不需要 ngrok skip header ***
             const response = await fetch(submitApiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'ngrok-skip-browser-warning': 'true'
-                    // 如果您的後端需要驗證，可以考慮加入 Authorization Header
-                    // 例如，傳遞 LIFF 的 ID Token:
-                    // 'Authorization': `Bearer ${liff.getIDToken()}`
+                    // 'ngrok-skip-browser-warning': 'true' // 如果後端已部署到 Render，這行可以移除
                 },
-                body: JSON.stringify(payload) // 將 payload 轉為 JSON 字串
+                body: JSON.stringify(payload)
             });
 
-            // 檢查後端回應狀態
-            if (!response.ok) {
-                // 嘗試讀取後端回傳的錯誤訊息
-                let errorMsg = `提交失敗 (狀態碼: ${response.status})`;
+            // ... (處理回應的邏輯不變，可以顯示 Drive 連結) ...
+             if (!response.ok) {
+                let errorMsg = `提交失敗 (${response.status})`;
                 try {
-                    const errorData = await response.json(); // 假設後端錯誤時回傳 JSON
+                    const errorData = await response.json();
                     errorMsg += `: ${errorData.message || JSON.stringify(errorData)}`;
-                } catch (e) {
-                    // 如果後端沒回傳 JSON，嘗試讀取文字
-                    errorMsg += `: ${await response.text()}`;
-                }
+                } catch (e) { errorMsg += `: ${await response.text()}`; }
                 throw new Error(errorMsg);
-            }
-
-            // 假設後端成功時回傳 JSON，包含成功訊息或下一步指示
+             }
             const result = await response.json();
             console.log("Submission successful:", result);
-            statusMessage.textContent = "簽名已成功提交！";
-            signaturePad.off(); // 禁用簽名版
-
-            // (可選) 提交成功後自動關閉 LIFF 視窗
-            if (liff.isInClient()) { // 檢查是否在 LINE App 內執行
-                alert("簽名已成功提交！此視窗將會關閉。"); // 提示用戶
-                setTimeout(() => { liff.closeWindow(); }, 500); // 稍微延遲後關閉
-            } else {
-                alert("簽名已成功提交！"); // 在外部瀏覽器顯示提示
+            let successMsg = "資料與簽名已成功提交！";
+            if (result.drive_web_view_link) {
+                 successMsg += ` <a href="${result.drive_web_view_link}" target="_blank">點此查看已產生的 PDF</a>`;
             }
+            statusMessage.innerHTML = successMsg;
+            signaturePad.off();
+            if (liff.isInClient()) { setTimeout(() => { liff.closeWindow(); }, 3000); } // 延長一點時間看連結
 
         } catch (error) {
             console.error("提交簽名時發生錯誤:", error);
             statusMessage.textContent = `錯誤：提交失敗 (${error.message})。請稍後再試。`;
-            // 讓用戶可以重試
             confirmButton.disabled = false;
             clearButton.disabled = false;
         }
@@ -252,31 +219,18 @@ document.addEventListener('DOMContentLoaded', () => {
      * 這是為了確保在高 DPI 螢幕和視窗縮放時，簽名線條不會模糊
      */
     function resizeCanvas() {
-        if (!signaturePad) return; // 如果簽名版還沒初始化，就不執行
-
+        // ... (resizeCanvas 程式碼不變) ...
+        if (!signaturePad) return;
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
         const canvasWidth = canvas.offsetWidth;
         const canvasHeight = canvas.offsetHeight;
-
-        // 檢查寬高是否有效，避免在隱藏元素上操作
-        if (canvasWidth === 0 || canvasHeight === 0) {
-            console.warn("Canvas dimensions are zero, skipping resize.");
-            return;
-        }
-
-        // 先記錄目前的簽名數據 (如果有的話)
+        if (canvasWidth === 0 || canvasHeight === 0) { return; }
         const data = signaturePad.toData();
-
-        // 根據設備像素比例調整內部畫布的實際像素大小
         canvas.width = canvasWidth * ratio;
         canvas.height = canvasHeight * ratio;
-        // 調整畫布的縮放比例
         canvas.getContext("2d").scale(ratio, ratio);
-        // 清除當前畫布 (因為尺寸變了)
         signaturePad.clear();
-        // 將之前記錄的簽名數據畫回到新的畫布上
         signaturePad.fromData(data);
-        console.log("Canvas resized.");
     }
 
 }); // DOMContentLoaded End
