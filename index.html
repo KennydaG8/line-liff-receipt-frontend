@@ -3,47 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>訂金收據簽名</title>
+    <title>租屋定金收據</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>訂金資訊填寫與簽署</h1>
+    <h1>租 屋 定 金 收 據</h1>
+    <p style="text-align: center; margin-top: -10px; margin-bottom: 20px;">(請填寫以下資訊)</p>
 
-    <div id="receipt-info">
-        <p>
-            <label for="rep-company-name">您的公司/單位名稱 (業務填寫)：</label><br>
-            <input type="text" id="rep-company-name" name="rep-company-name" required>
-        </p>
-        <hr> <p><strong>--- 以下由客戶填寫 ---</strong></p>
-        <p>
-            <label for="customer-name">姓名/聯絡人：</label><br>
-            <input type="text" id="customer-name" name="customer-name" required>
-        </p>
-        <p>
-            <label for="amount">訂金金額：</label><br>
-            <input type="text" id="amount" name="amount" required>
-        </p>
-        <p>
-            <label for="description">事由/備註：</label><br>
-            <textarea id="description" name="description" rows="3" required></textarea>
-        </p>
+    <div id="input-form">
+
+        <h2>一、承租人 與 出租人 資訊</h2>
+        <div class="form-section">
+            <p>
+                <label for="tenantName">承租人 (甲方)：</label><br>
+                <input type="text" id="tenantName" name="tenantName" required>
+            </p>
+            <p>
+                <label for="tenantPhone">聯絡電話 (甲方)：</label><br>
+                <input type="tel" id="tenantPhone" name="tenantPhone" required> </p>
+            <p>
+                <label for="tenantEmail">電子郵件 (甲方)：</label><br>
+                <input type="email" id="tenantEmail" name="tenantEmail" required> </p>
+            <hr class="thin-hr">
+            <p>
+                <label for="landlordName">出租人 / 仲介服務人員 (乙方)：</label><br>
+                <input type="text" id="landlordName" name="landlordName" required>
+            </p>
+            <p>
+                <label for="landlordPhone">聯絡電話 (乙方)：</label><br>
+                <input type="tel" id="landlordPhone" name="landlordPhone" required> </p>
+        </div>
+
+        <h2>二、租賃 資訊</h2>
+        <div class="form-section">
+            <p>
+                <label for="leaseAddress">租賃地址：</label><br>
+                <input type="text" id="leaseAddress" name="leaseAddress" required>
+            </p>
+            <p>
+                <label for="leaseStartDate">租期 (起)：</label><br>
+                <input type="text" id="leaseStartDate" name="leaseStartDate" placeholder="例如: 2025 年 05 月 01 日" required>
+                 </p>
+            <p>
+                <label for="leaseEndDate">租期 (迄)：</label><br>
+                <input type="text" id="leaseEndDate" name="leaseEndDate" placeholder="例如: 2026 年 04 月 30 日" required>
+                 </p>
+            <p>
+                <label for="monthlyRent">月租金金額 (NT$)：</label><br>
+                <input type="number" id="monthlyRent" name="monthlyRent" inputmode="numeric" pattern="[0-9]*" required> </p>
+            <p>
+                <label for="rentPaymentMethod">租金繳納方式：</label><br>
+                <input type="text" id="rentPaymentMethod" name="rentPaymentMethod" placeholder="例如: 月繳" required>
+                 </p>
+            <p>
+                <label for="remarks">備註 (如有)：</label><br>
+                <textarea id="remarks" name="remarks" rows="3"></textarea> </p>
+        </div>
+
+        <h2>三、定金 資訊</h2>
+        <div class="form-section">
+             <p>
+                <label for="depositAmount">定金金額 (NT$)：</label><br>
+                <input type="number" id="depositAmount" name="depositAmount" inputmode="numeric" pattern="[0-9]*" required> </p>
+            <p>
+                <label for="depositPaymentMethod">付款方式：</label><br>
+                <input type="text" id="depositPaymentMethod" name="depositPaymentMethod" placeholder="例如: 現金 / 匯款" required>
+                 </p>
+            <p>
+                <label for="depositPaymentDate">付款日期：</label><br>
+                <input type="text" id="depositPaymentDate" name="depositPaymentDate" placeholder="例如: 2025 年 04 月 03 日" required>
+                 </p>
+            <p>
+                <label for="expectedSigningDate">預定簽約日：</label><br>
+                <input type="text" id="expectedSigningDate" name="expectedSigningDate" placeholder="例如: 2025 年 04 月 10 日" required>
+                 </p>
+        </div>
+
+         </div>
+    <hr>
+
+    <div class="terms-section">
+        <h2>四、承租人 條款 同意 確認</h2>
+        <p style="font-size: smaller;">（簽署即代表同意以下條款）</p>
+        <ol style="font-size: smaller; margin-left: 20px;">
+             <li>訂金為保留租賃意願之用，一旦審核通過即成立契約預約。</li>
+             <li>若於預定簽約日前，因甲方（承租人）之事由致不能履行時，定金不得請求返還。</li>
+             <li>若乙方（出租人/仲介）同意後無故不租賃，致不能履行時，應雙倍返還本筆定金。</li>
+             <li>我了解並同意相關仲介服務費條款（如有）。</li>
+             <li>我已詳閱並同意上述條款內容，並確認提供資料為真實無誤。</li>
+             <li>本人了解，本訂金為租賃意願之擔保，並不代表已完成承租程序，仍需經出租人進行資料審核。</li>
+             <li>我了解本收據具《民法第 249 條》所定之法律效力，並同意受其約束。</li>
+        </ol>
     </div>
     <hr>
 
-    <h2>客戶簽名確認:</h2>
+
+    <h2>承租人簽名確認:</h2>
     <div class="signature-pad-container">
         <canvas id="signature-canvas"></canvas>
     </div>
-
     <div>
         <button id="clear-button">清除簽名</button>
-        <button id="confirm-button">確認簽名並送出</button>
+        <button id="confirm-button">確認資料並簽名送出</button>
     </div>
-
     <p id="status-message"></p>
 
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script src="signature_pad.umd.min.js"></script> <script src="script.js"></script>
+    <script src="signature_pad.umd.min.js"></script>
+    <script src="script.js"></script>
 
 </body>
 </html>
