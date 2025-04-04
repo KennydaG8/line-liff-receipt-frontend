@@ -7,21 +7,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const myLiffId = "2007188640-8vEWkonp"; // **** 請確認 ****
     const submitApiUrl = "https://line-liff-receipt-backend.onrender.com/api/submit-receipt"; // **** 請確認 ****
 
-    // --- 獲取 DOM 元素 ---
+    // --- 獲取 DOM 元素 (必須與上面的 index.html ID 匹配) ---
     const canvas = document.getElementById('signature-pad');
     const clearButton = document.getElementById('clear-button');
     const confirmButton = document.getElementById('confirm-button');
     const statusMessage = document.getElementById('status-message');
-    const placeholder = document.getElementById('signature-placeholder');
+    const placeholder = document.getElementById('signature-placeholder'); // Placeholder
 
-    // **獲取【所有】需要傳送的欄位元素**
-    // -- Readonly Fields --
-    const landlordNameRoEl = document.getElementById('landlordName_ro'); // Added
-    const leaseAddressRoEl = document.getElementById('leaseAddress_ro'); // Added
-    const leaseStartDateRoEl = document.getElementById('leaseStartDate_ro'); // Added
-    const leaseEndDateRoEl = document.getElementById('leaseEndDate_ro');   // Added
-    const monthlyRentRoEl = document.getElementById('monthlyRent_ro');   // Added
-    const depositAmountRoEl = document.getElementById('depositAmount_ro');  // Added
+    // --- 獲取【所有】需要讀寫的欄位元素 ---
+    // -- Landlord/Lease/Deposit Fields (Potentially pre-filled) --
+    const landlordNameEl = document.getElementById('landlordName');
+    const landlordPhoneEl = document.getElementById('landlordPhone');
+    const leaseAddressEl = document.getElementById('leaseAddress');
+    const leaseStartDateEl = document.getElementById('leaseStartDate');
+    const leaseEndDateEl = document.getElementById('leaseEndDate');
+    const monthlyRentEl = document.getElementById('monthlyRent');
+    const depositAmountEl = document.getElementById('depositAmount');
+    // -- Added based on previous full script --
+    const rentPaymentMethodEl = document.getElementById('rentPaymentMethod');
+    const remarksEl = document.getElementById('remarks');
+    const depositPaymentMethodEl = document.getElementById('depositPaymentMethod');
+    const depositPaymentDateEl = document.getElementById('depositPaymentDate');
+    const expectedSigningDateEl = document.getElementById('expectedSigningDate');
+    const brokerageFeeAmountEl = document.getElementById('brokerageFeeAmount');
     // -- Editable Tenant Fields --
     const tenantNameEl = document.getElementById('tenantName');
     const tenantPhoneEl = document.getElementById('tenantPhone');
@@ -31,31 +39,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const term5Checkbox = document.getElementById('term5-agree');
     const term6Checkbox = document.getElementById('term6-agree');
     const term7Checkbox = document.getElementById('term7-agree');
+    // -- Email Backup Checkbox (optional) --
+    const emailBackupCheckbox = document.getElementById('emailBackup');
+
 
     // --- 變數宣告 ---
     let signaturePad;
     let currentSaveFolderId = null;
 
     // --- 主要執行流程 ---
-    if (typeof liff !== 'undefined' && typeof SignaturePad !== 'undefined') {
-        initializeLiffAndSignaturePad(myLiffId);
-    } else {
-        console.error("錯誤：LIFF SDK 或 SignaturePad 庫未成功加載。");
-        if(statusMessage) statusMessage.textContent = "錯誤：頁面初始化失敗。";
-        if(confirmButton) confirmButton.disabled = true;
-        if(clearButton) clearButton.disabled = true;
+    // Check dependencies first
+    if (typeof liff === 'undefined' || typeof SignaturePad === 'undefined') {
+         console.error("錯誤：LIFF SDK 或 SignaturePad 庫未成功加載。");
+         if(statusMessage) statusMessage.textContent = "錯誤：頁面初始化失敗。";
+         // Disable buttons immediately if dependencies missing
+         if(confirmButton) confirmButton.disabled = true;
+         if(clearButton) clearButton.disabled = true;
+         // Optionally disable share button too
+         const shareBtn = document.querySelector('button[onclick="shareCurrentDataToLine()"]');
+         if(shareBtn) shareBtn.disabled = true;
+         return; // Stop execution
     }
+    // Proceed with initialization
+    initializeLiffAndSignaturePad(myLiffId);
+
 
     // --- 函式定義 ---
 
     async function initializeLiffAndSignaturePad(liffId) {
-        // ... (LIFF 初始化, 讀取 URL Folder ID - 保持不變) ...
-        if(!statusMessage) return;
+        if(!statusMessage) { console.error("Status message element not found"); return; }
         statusMessage.textContent = "正在初始化 LIFF...";
         try {
             await liff.init({ liffId: liffId });
             statusMessage.textContent = "LIFF 初始化成功！";
 
+            // 1. Get Folder ID from URL (required for API call)
             const urlParams = new URLSearchParams(window.location.search);
             currentSaveFolderId = urlParams.get('pdfSaveFolderId');
 
@@ -68,9 +86,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             console.log("讀取到 Save Folder ID:", currentSaveFolderId);
 
+            // 2. Populate fields from URL parameters (Landlord's pre-fill mechanism)
+            populateFieldsFromUrlParams(urlParams);
+
+            // 3. Initialize Signature Pad
             initializeSignaturePad();
 
-            statusMessage.textContent = "請填寫承租人資訊並簽名確認。"; // Updated text
+            statusMessage.textContent = "請填寫承租人資訊並簽名確認。";
 
         } catch (error) {
              console.error("LIFF 初始化錯誤:", error);
@@ -80,10 +102,54 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+     // ** NEW Function: Populate fields based on URL parameters **
+     function populateFieldsFromUrlParams(params) {
+        console.log("檢查 URL 參數以預填欄位...");
+        const fieldsToPopulate = {
+            name: landlordNameEl, // URL 'name' fills landlordName input
+            // Note: The original landlord HTML didn't have a landlordPhone input ID.
+            // Assuming the new 'landlordPhone' input should be filled if a 'phone' param exists?
+            // phone: landlordPhoneEl, // Example: if URL has ?phone=...
+            addr: leaseAddressEl, // URL 'addr' fills leaseAddress input
+            start: leaseStartDateEl,
+            end: leaseEndDateEl,
+            rent: monthlyRentEl,
+            deposit: depositAmountEl
+            // Add mappings for other fields if they can be pre-filled via URL
+            // e.g., rentMethod: rentPaymentMethodEl,
+        };
+
+        let prefilledCount = 0;
+        for (const paramName in fieldsToPopulate) {
+            if (params.has(paramName)) {
+                const element = fieldsToPopulate[paramName];
+                const value = decodeURIComponent(params.get(paramName) || '');
+                if (element) {
+                    element.value = value;
+                    console.log(`已預填欄位 #${element.id} 使用參數 '${paramName}' = '${value}'`);
+                    prefilledCount++;
+                    // ** REMOVED **: element.setAttribute('readonly', true); // Don't make read-only if script needs it
+                } else {
+                    console.warn(`找不到用於預填的元素 ID，對應參數 '${paramName}'`);
+                }
+            }
+        }
+         if (prefilledCount > 0) {
+             console.log(`總共預填了 ${prefilledCount} 個欄位。`);
+             // Optionally disable the "Share" button if data is already filled from URL
+              // const shareBtn = document.querySelector('button[onclick="shareCurrentDataToLine()"]');
+              // if(shareBtn) shareBtn.disabled = true; // Or hide it
+         } else {
+             console.log("未在 URL 中找到用於預填的參數。");
+         }
+    }
+
+
     function initializeSignaturePad() {
-        // ... (SignaturePad 初始化, 按鈕監聽, Resize - 保持不變) ...
-         if (!canvas || !placeholder) { /* ... */ return; }
+        // ... (Initialization using new SignaturePad - mostly unchanged) ...
+         if (!canvas || !placeholder) { /* ... error handling ... */ return; }
          try {
+             // ... (Get context, scale, etc.) ...
              const ratio = Math.max(window.devicePixelRatio || 1, 1);
              canvas.width = canvas.offsetWidth * ratio;
              canvas.height = canvas.offsetHeight * ratio;
@@ -93,17 +159,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
              signaturePad = new SignaturePad(canvas, { penColor: "rgb(0, 0, 0)" });
 
-             // Placeholder Logic
+             // Placeholder Logic integration with SignaturePad events
              function updatePlaceholderVisibility() { /* ... */
-                 if (placeholder && signaturePad) {
-                     placeholder.style.display = signaturePad.isEmpty() ? 'block' : 'none';
-                 }
+                  if (placeholder && signaturePad) {
+                      placeholder.style.display = signaturePad.isEmpty() ? 'block' : 'none';
+                  }
              }
              signaturePad.addEventListener("beginStroke", () => { if(placeholder) placeholder.style.display = 'none'; });
              signaturePad.addEventListener("clear", updatePlaceholderVisibility);
-             updatePlaceholderVisibility();
+             updatePlaceholderVisibility(); // Initial check
 
-             // Button Listeners
+             // Button Listeners (no onclick needed in HTML)
              if (clearButton) {
                  clearButton.addEventListener('click', () => { if(signaturePad) signaturePad.clear(); });
              } else { console.error("找不到清除按鈕"); }
@@ -115,126 +181,134 @@ document.addEventListener('DOMContentLoaded', () => {
              window.addEventListener('resize', resizeCanvas);
              console.log("Signature Pad initialized.");
 
-         } catch (error) { /* ... */ }
+         } catch (error) { /* ... error handling ... */ }
     }
 
-    // **MODIFIED handleSubmitSignature**
     async function handleSubmitSignature() {
-        if (!signaturePad || signaturePad.isEmpty()) {
-            alert("請承租人簽名確認！");
-            return;
-        }
+        // ... (Check signaturePad empty - unchanged) ...
+        if (!signaturePad || signaturePad.isEmpty()) { /* ... */ return; }
 
-        // **收集【所有需要的】表單數據 (包括 readonly 的)**
+        // ** Collect data from ALL relevant fields **
         const formData = {
-            // --- Readonly fields ---
-            // Use default value '' if element not found or value is null/undefined
-            landlordName: landlordNameRoEl?.value.trim() ?? '',
-            landlordPhone: document.getElementById('landlordPhone_ro')?.value.trim() ?? '',
-            leaseAddress: leaseAddressRoEl?.value.trim() ?? '',
-            leaseStartDate: leaseStartDateRoEl?.value.trim() ?? '',
-            leaseEndDate: leaseEndDateRoEl?.value.trim() ?? '',
-            monthlyRent: monthlyRentRoEl?.value.trim() ?? '',
-            depositAmount: depositAmountRoEl?.value.trim() ?? '',
-             // --- Editable fields ---
+            landlordName: landlordNameEl?.value.trim() ?? '',
+            landlordPhone: landlordPhoneEl?.value.trim() ?? '', // Now collected
+            leaseAddress: leaseAddressEl?.value.trim() ?? '',
+            leaseStartDate: leaseStartDateEl?.value.trim() ?? '',
+            leaseEndDate: leaseEndDateEl?.value.trim() ?? '',
+            monthlyRent: monthlyRentEl?.value.trim() ?? '', // Collect raw value
+            depositAmount: depositAmountEl?.value.trim() ?? '', // Collect raw value
+
+            rentPaymentMethod: rentPaymentMethodEl?.value.trim() ?? '',
+            remarks: remarksEl?.value.trim() ?? '',
+            depositPaymentMethod: depositPaymentMethodEl?.value.trim() ?? '',
+            depositPaymentDate: depositPaymentDateEl?.value.trim() ?? '',
+            expectedSigningDate: expectedSigningDateEl?.value.trim() ?? '',
+            brokerageFeeAmount: brokerageFeeAmountEl?.value.trim() ?? '', // Collect as string/number
+
             tenantName: tenantNameEl?.value.trim() ?? '',
             tenantPhone: tenantPhoneEl?.value.trim() ?? '',
             tenantEmail: tenantEmailEl?.value.trim() ?? '',
-            // --- Fields missing in current HTML (will be empty string) ---
-             rentPaymentMethod: '', // Example: If needed by backend but not in HTML
-             remarks: '',
-             depositPaymentMethod: '',
-             depositPaymentDate: '',
-             expectedSigningDate: '',
-             brokerageFeeAmount: '',
         };
 
-        // **修改：只驗證【用戶需要填寫的】欄位**
-        const requiredUserData = {
+
+        // ** Validation: Check required fields based on the FULL form now **
+        // Adjust this list based on actual requirements
+         const requiredFieldData = {
+             "房東姓名": formData.landlordName,
+             "房東電話": formData.landlordPhone,
+             "租賃地址": formData.leaseAddress,
+             "租期起": formData.leaseStartDate,
+             "租期迄": formData.leaseEndDate,
+             "月租金": formData.monthlyRent,
+             "訂金金額": formData.depositAmount,
+             "訂金付款方式": formData.depositPaymentMethod,
+             "訂金付款日期": formData.depositPaymentDate,
+             "預定簽約日": formData.expectedSigningDate,
              "承租人姓名": formData.tenantName,
              "承租人電話": formData.tenantPhone,
              "承租人Email": formData.tenantEmail,
-        };
-        const missingUserFields = Object.keys(requiredUserData).filter(key => !requiredUserData[key]);
+         };
+         // Exclude optional fields like remarks, brokerageFeeAmount from this basic check
+        const missingFields = Object.keys(requiredFieldData).filter(key => !requiredFieldData[key]);
 
-        if (missingUserFields.length > 0) {
-            alert(`請填寫承租人資訊！(缺少: ${missingUserFields.join(', ')})`);
+        if (missingFields.length > 0) {
+            alert(`請填寫所有必填欄位！(缺少: ${missingFields.join(', ')})`);
             return;
         }
 
-        // 檢查 Folder ID
+        // Check Folder ID
         if (!currentSaveFolderId) { /* ... */ return; }
 
-        // 檢查條款 Checkbox
+        // Check Checkboxes
         const term4Checked = term4Checkbox?.checked;
-        // ... (檢查 term5, term6, term7) ...
         const term5Checked = term5Checkbox?.checked;
         const term6Checked = term6Checkbox?.checked;
         const term7Checked = term7Checkbox?.checked;
         if (!term4Checked || !term5Checked || !term6Checked || !term7Checked) {
-           alert("請勾選同意所有條款 (項目 4、5、6、7) 後再提交！");
+           alert("請勾選同意所有條款後再提交！");
            return;
         }
+        // Optional: Check email backup preference
+        const sendEmailBackup = emailBackupCheckbox?.checked ?? false;
 
-        // 更新狀態並禁用按鈕
-        if(statusMessage) statusMessage.textContent = "正在處理並提交簽名...";
+
+        // Update status & disable buttons
+        if(statusMessage) statusMessage.textContent = "正在處理並提交...";
         if (confirmButton) confirmButton.disabled = true;
         if (clearButton) clearButton.disabled = true;
 
         try {
             const signatureImageBase64 = signaturePad.toDataURL('image/png');
 
-            // **修改：Payload 現在包含【所有】 formData (包括從 readonly 讀取的)**
+            // Construct the FULL payload
             const payload = {
-                ...formData, // Now includes landlord, lease details etc.
+                ...formData, // Includes all fields collected above
                 signatureImage: signatureImageBase64,
                 pdfSaveFolderId: currentSaveFolderId,
                 submittedAt: new Date().toISOString(),
                 termsAgreed: {
-                   term4: term4Checked,
-                   term5: term5Checked,
-                   term6: term6Checked,
-                   term7: term7Checked,
-                }
+                   term4: term4Checked, term5: term5Checked, term6: term6Checked, term7: term7Checked,
+                },
+                sendEmailBackup: sendEmailBackup // Include email preference
             };
 
-            console.log("準備發送到後端的【完整版】Payload:", JSON.stringify(payload)); // Log full payload
+            console.log("準備發送到後端的【完整】Payload:", "...", JSON.stringify(payload).length, "bytes");
 
-            // 執行 fetch POST 到 submitApiUrl
+            // Execute fetch POST to submitApiUrl
             const response = await fetch(submitApiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
-            // 處理 API 回應 (與之前相同)
-            if (!response.ok) { /* ... 錯誤處理 ... */ throw new Error(`伺服器錯誤 ${response.status}`); }
+            // Handle response (success/error, close window) - unchanged
+            if (!response.ok) { /* ... error handling ... */ throw new Error(`伺服器錯誤 ${response.status}`); }
 
             const result = await response.json();
             console.log("Submission successful:", result);
             let successMsg = "資料與簽名已成功提交！";
             if (result.drive_web_view_link) {
-                successMsg += ` <a href="${result.drive_web_view_link}" target="_blank" rel="noopener noreferrer">點此查看已產生的 PDF</a>`;
+                successMsg += ` <a href="${result.drive_web_view_link}" target="_blank" rel="noopener noreferrer">點此查看 PDF</a>`;
             }
             if(statusMessage) statusMessage.innerHTML = successMsg;
-            if(signaturePad) signaturePad.off(); // 禁用簽名
+            if(signaturePad) signaturePad.off(); // Disable signature pad
 
             if (typeof liff !== 'undefined' && liff.isInClient()) {
                setTimeout(() => { liff.closeWindow(); }, 5000);
             }
 
         } catch (error) {
-            console.error("提交簽名時發生錯誤:", error);
-            if(statusMessage) statusMessage.textContent = `錯誤：提交失敗 (${error.message})。請稍後再試。`;
-            // 允許重試
+            console.error("提交時發生錯誤:", error);
+            if(statusMessage) statusMessage.textContent = `錯誤：提交失敗 (${error.message})。`;
+            // Re-enable buttons on failure
             if (confirmButton) confirmButton.disabled = false;
             if (clearButton) clearButton.disabled = false;
         }
     }
 
     function resizeCanvas() {
-        // (與之前版本相同)
-        if (!signaturePad || !canvas || !placeholder) return;
+        // (Unchanged - uses signaturePad.toData/fromData)
+         if (!signaturePad || !canvas || !placeholder) return;
          const data = signaturePad.toData();
          const ratio = Math.max(window.devicePixelRatio || 1, 1);
           if (canvas.offsetWidth > 0 && canvas.offsetHeight > 0) {
@@ -243,21 +317,46 @@ document.addEventListener('DOMContentLoaded', () => {
              canvas.getContext("2d").scale(ratio, ratio);
              signaturePad.clear();
              signaturePad.fromData(data);
-             placeholder.style.display = signaturePad.isEmpty() ? 'block' : 'none';
+             if(placeholder) placeholder.style.display = signaturePad.isEmpty() ? 'block' : 'none';
           }
     }
 
-     // Share to Line Function (for onclick)
-      window.shareToLine = () => {
-         const url = encodeURIComponent(window.location.href);
-         const text = encodeURIComponent('這是您的租屋訂金收據連結，請填寫後簽名確認：');
-         window.location.href = `https://line.me/R/msg/text/?${text}%0A${url}`;
-         console.log("Attempting to share to LINE.");
-      };
+    // ** NEW Function for the specific share button in the merged HTML **
+    // This reads current values from the fields meant to be pre-filled
+     window.shareCurrentDataToLine = () => {
+        console.log("正在準備分享連結...");
+        const name = encodeURIComponent(landlordNameEl?.value || '');
+        const addr = encodeURIComponent(leaseAddressEl?.value || '');
+        const start = encodeURIComponent(leaseStartDateEl?.value || '');
+        const end = encodeURIComponent(leaseEndDateEl?.value || '');
+        const rent = encodeURIComponent(monthlyRentEl?.value || '');
+        const deposit = encodeURIComponent(depositAmountEl?.value || '');
 
-    // Initial placeholder visibility
-    const initialPlaceholder = document.getElementById('signature-placeholder');
-    if (initialPlaceholder) initialPlaceholder.style.display = 'block';
+        // Construct URL with current data as parameters
+        const base = window.location.origin + window.location.pathname;
+         // Only include non-empty parameters
+         const params = new URLSearchParams();
+         if (name) params.set('name', decodeURIComponent(name)); // Decode for readability if needed in logs
+         if (addr) params.set('addr', decodeURIComponent(addr));
+         if (start) params.set('start', decodeURIComponent(start));
+         if (end) params.set('end', decodeURIComponent(end));
+         if (rent) params.set('rent', decodeURIComponent(rent));
+         if (deposit) params.set('deposit', decodeURIComponent(deposit));
+         // Crucially, add the folder ID so the recipient page can use it
+         if (currentSaveFolderId) params.set('pdfSaveFolderId', currentSaveFolderId);
+
+
+        const urlToShare = `${base}?${params.toString()}`;
+
+        const text = encodeURIComponent('這是您的租屋訂金表單連結，請填寫後簽名確認：');
+        const lineUrl = `https://line.me/R/msg/text/?${text}%0A${encodeURIComponent(urlToShare)}`;
+
+        console.log("分享的 URL:", urlToShare); // Log the URL being shared
+        window.location.href = lineUrl;
+    };
+
+    // Remove the old shareToLine if it exists, to avoid confusion
+    // delete window.shareToLine; // Optional cleanup
 
 
 }); // DOMContentLoaded End

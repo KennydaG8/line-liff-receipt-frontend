@@ -3,55 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>租屋訂金收據（簽署版）</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <title>租屋訂金收據（簽署版 - 完整功能）</title> <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h2>租屋訂金收據</h2>
+        <h2>租屋訂金收據</h2> <form id="receipt-form">
 
-        <div class="section-title">一、房東預填資料（不可修改）</div>
-        <label>房東 / 仲介姓名</label>
-        <input type="text" id="landlordName_ro" value="王小姐" readonly> <label>聯絡電話：</label>
-        <input type="tel" id="landlordPhone_ro" value="+886912345678" readonly> <label>租屋地址</label>
-        <input type="text" id="leaseAddress_ro" value="台北市大安區信義路123號" readonly> <label>租期（起）</label>
-        <input type="text" id="leaseStartDate_ro" value="2025/05/01" readonly> <label>租期（迄）</label>
-        <input type="text" id="leaseEndDate_ro" value="2026/04/30" readonly> <label>月租金</label>
-        <input type="text" id="monthlyRent_ro" value="NT$20,000" readonly> <label>訂金金額</label>
-        <input type="text" id="depositAmount_ro" value="NT$10,000" readonly> <div class="button-group">
-            <button type="button" onclick="shareToLine()">房東填寫完畢 ➜LINE 傳送給租客</button>
-        </div>
+            <div class="section-title">一、出租人/仲介 與 承租人 資訊</div>
+             <div class="form-section">
+                 <label for="landlordName">房東 / 仲介姓名 (乙方)：</label>
+                 <input type="text" id="landlordName" name="landlordName" required> <label for="landlordPhone">聯絡電話 (乙方)：</label>
+                 <input type="tel" id="landlordPhone" name="landlordPhone" required> <hr class="thin-hr">
 
-        <form id="tenant-form">
-            <h2>二、承租人填寫資訊</h2>
+                 <label for="tenantName">承租人姓名 (甲方)：</label>
+                 <input type="text" id="tenantName" name="tenantName" placeholder="請輸入姓名" required>
+
+                 <label for="tenantPhone">聯絡電話 (甲方)：</label>
+                 <input type="tel" id="tenantPhone" name="tenantPhone" placeholder="請輸入電話" required>
+
+                 <label for="tenantEmail">電子信箱 (甲方)：</label>
+                 <input type="email" id="tenantEmail" name="tenantEmail" placeholder="請輸入 Email" required>
+             </div>
+
+
+            <div class="section-title">二、租賃 資訊</div>
             <div class="form-section">
-                <p>
-                    <label for="tenantName">承租人姓名：</label><br>
-                    <input type="text" id="tenantName" name="tenantName" required>
-                </p>
-                <p>
-                    <label for="tenantPhone">聯絡電話：</label><br>
-                    <input type="tel" id="tenantPhone" name="tenantPhone" required>
-                </p>
-                <p>
-                    <label for="tenantEmail">電子郵件：</label><br>
-                    <input type="email" id="tenantEmail" name="tenantEmail" required>
-                </p>
-            </div>
+                <label for="leaseAddress">租屋地址：</label>
+                <input type="text" id="leaseAddress" name="leaseAddress" required> <label for="leaseStartDate">租期（起）：</label>
+                <input type="text" id="leaseStartDate" name="leaseStartDate" placeholder="例如: 2025/05/01" required> <label for="leaseEndDate">租期（迄）：</label>
+                <input type="text" id="leaseEndDate" name="leaseEndDate" placeholder="例如: 2026/04/30" required> <label for="monthlyRent">月租金 (NT$)：</label> <input type="text" id="monthlyRent" name="monthlyRent" required> <label for="rentPaymentMethod">租金繳納方式：</label> <input type="text" id="rentPaymentMethod" name="rentPaymentMethod" placeholder="例如: 月繳 / 匯款" required> <label for="remarks">備註 (如有)：</label>
+                 <textarea id="remarks" name="remarks" rows="3"></textarea> </div>
 
-            <div class="terms-section">
-                <h2>三、承租人條款同意確認</h2>
-                <div class="clause-box">
-                     <ul style="padding-left: 1.2rem; margin: 0; font-size: 0.95rem; line-height: 1.6;">
+             <div class="section-title">三、訂金 資訊</div> <div class="form-section">
+                 <label for="depositAmount">訂金金額 (NT$)：</label> <input type="text" id="depositAmount" name="depositAmount" required> <label for="depositPaymentMethod">訂金付款方式：</label> <input type="text" id="depositPaymentMethod" name="depositPaymentMethod" placeholder="例如: 現金 / 匯款" required> <label for="depositPaymentDate">訂金付款日期：</label> <input type="text" id="depositPaymentDate" name="depositPaymentDate" placeholder="例如: 2025/04/03" required> <label for="expectedSigningDate">預定簽約日：</label>
+                 <input type="text" id="expectedSigningDate" name="expectedSigningDate" placeholder="例如: 2025/04/10" required> <label for="brokerageFeeAmount">仲介服務費金額 (NT$)：</label>
+                 <input type="number" id="brokerageFeeAmount" name="brokerageFeeAmount" inputmode="numeric" pattern="[0-9]*" placeholder="(無則免填)"> </div>
+
+            <div class="button-group" style="margin-top: 1rem; margin-bottom: 1.5rem;">
+                <button type="button" onclick="shareCurrentDataToLine()">準備傳送資料給租客 ➜ LINE</button> </div>
+
+            <div class="section-title">四、承租人條款同意確認</div>
+            <div class="terms-section"> <div class="clause-box">
+                    <ul style="padding-left: 1.2rem; margin: 0; font-size: 0.95rem; line-height: 1.6;">
                         <li>訂金為保留租賃意願之用，一旦審核通過即成立契約預約。</li>
                         <li>若於預定簽約日前，因甲方（承租人）之事由致不能履行時，訂金不得請求返還。</li>
                         <li>若乙方同意後，因乙方之事由致不能履行時，應雙倍返還訂金。</li>
                     </ul>
                 </div>
-                <p style="font-size: smaller;">（請詳閱並勾選以下 4-7 項條款）</p>
+                <p style="font-size: smaller;">（請詳閱並勾選以下條款）</p>
                 <div class="checkbox-group">
                     <div class="checkbox-item">
                         <input type="checkbox" id="term4-agree" name="term4-agree" required>
@@ -67,31 +70,24 @@
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="term7-agree" name="term7-agree" required>
-                        <label for="term7-agree">我了解本收據具《民法第 249 條》所定之法律效力，並同意受其約束。</label>
+                        <label for="term7-agree">我了解本收據具《民法第249條》所定之法律效力，並同意受其約束。</label>
                     </div>
                 </div>
-            </div>
-            <hr>
+             </div>
 
-            <h2>承租人簽名確認:</h2>
-            <div class="signature-pad-container">
-                <canvas id="signature-pad" style="border: 1px dashed #ccc; width: 100%; min-height: 150px; background-color: #fff;"></canvas>
-                 <span class="signature-placeholder" id="signature-placeholder" style="position: absolute; top: 10px; left: 10px; color: #aaa; pointer-events: none; z-index: 1;">在此簽名</span>
+            <div class="section-title">五、承租人簽名確認</div>
+            <div style="position: relative; width: 100%; min-height: 150px;" class="signature-box">
+                <span class="signature-placeholder" id="signature-placeholder" style="position: absolute; top: 10px; left: 16px; color: #aaa; font-size: 0.9rem; pointer-events: none; z-index: 1;">在此簽名</span>
+                <canvas id="signature-pad" style="display: block; width: 100%; height: 100%; background-color: #fff;"></canvas> </div>
+
+            <div class="checkbox-group" style="margin-top: 0.5rem;">
+                <label><input type="checkbox" id="emailBackup"> 同時發送 Email 備份</label>
             </div>
 
             <div class="button-group">
-                <button type="button" id="clear-button">清除簽名</button>
+                 <button type="button" id="clear-button" style="background-color: #ccc; color: #333;">清除簽名</button>
                 <button type="button" id="confirm-button">確認資料並簽名送出</button>
             </div>
-
-            <p id="status-message" style="min-height: 1.2em; margin-top: 1em; text-align: center;"></p>
-        </form>
-
-    </div>
-
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script src="signature_pad.umd.min.js"></script>
-    <script src="script.js"></script>
-
-</body>
+            <p class="subtext" id="status-message">請填寫表單資訊並簽名確認。</p> </form> </div> <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="signature_pad.umd.min.js"></script> <script src="script.js"></script> </body>
 </html>

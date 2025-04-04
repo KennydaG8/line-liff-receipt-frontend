@@ -10,47 +10,57 @@ body {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   padding: 1.5rem;
   max-width: 600px;
-  margin: auto;
+  margin: 1rem auto; /* Added margin */
 }
 h2 {
-  color: #00C300;
+  color: #00C300; /* Original Green */
   font-size: 1.5rem;
   margin-bottom: 1rem;
+  text-align: center; /* Center align */
 }
 .section-title {
   font-weight: bold;
   margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.8rem; /* Consistent margin */
   font-size: 1.1rem;
+  color: #555;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.3rem;
 }
 label {
   display: block;
-  margin-top: 1rem;
+  margin-top: 1rem; /* Space above label */
+  margin-bottom: 0.3rem; /* Space below label */
   font-weight: 500;
+  color: #444;
 }
-input, textarea {
+input[type="text"],
+input[type="tel"],
+input[type="email"],
+input[type="number"], /* Added number type */
+textarea {
   width: 100%;
-  padding: 0.5rem;
-  margin-top: 0.3rem;
+  padding: 0.75rem;
+  margin-top: 0.1rem;
   border: 1px solid #ccc;
   border-radius: 8px;
-  /* Ensure input/textarea take full width considering padding and border */
   box-sizing: border-box;
+  font-size: 1rem;
 }
-input[readonly] {
-  background: #f1f1f1;
-  color: #555;
-}
+/* Removed readonly styles as fields are now editable,
+   but can be added back if needed for specific display */
+/* input[readonly] {
+   background: #f1f1f1;
+   color: #555;
+   cursor: not-allowed;
+} */
 .signature-box {
   border: 1px dashed #999;
-  /* height: 150px; */ /* Height is now set by the wrapper div in HTML */
+  /* height: 150px; */ /* Controlled by wrapper */
   border-radius: 8px;
   margin-top: 0.5rem;
-  background-color: #fff;
-  /* Ensure canvas fits within this box */
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
+  background-color: #fff; /* White background */
+  touch-action: none; /* Prevent scroll */
 }
 .clause-box {
   background-color: #f8f8f8;
@@ -65,67 +75,76 @@ input[readonly] {
 }
 .checkbox-group label {
   display: flex;
-  align-items: flex-start; /* Align checkbox and text nicely */
-  gap: 0.5rem;
+  align-items: flex-start;
+  gap: 0.6rem;
   justify-content: flex-start;
-  line-height: 1.4;
+  line-height: 1.45;
   margin-bottom: 0.8rem;
-  word-break: break-word; /* Prevent long text overflow */
-  white-space: normal; /* Allow text wrapping */
-  /* Reset label styles from global */
+  word-break: break-word;
+  white-space: normal;
   font-weight: normal;
-  margin-top: 0; /* Reset top margin */
+  margin-top: 0;
+  cursor: pointer;
+}
+/* Style for the div containing checkbox+label if needed */
+.checkbox-item {
+    margin-bottom: 0.5rem; /* Add space between items */
 }
 .checkbox-group input[type="checkbox"] {
-  flex-shrink: 0; /* Prevent checkbox shrinking */
-  margin-top: 0.3rem; /* Align checkbox vertically */
-  width: 1.2rem; /* Explicit size */
-  height: 1.2rem; /* Explicit size */
-  /* Reset input styles from global */
-  padding: 0;
-  border: initial;
-  border-radius: initial;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  cursor: pointer;
+  accent-color: #00C300;
 }
 .button-group {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   display: flex;
-  gap: 1rem;
-  flex-direction: column; /* Stack buttons vertically */
+  gap: 0.8rem;
+  flex-direction: column;
 }
 button {
-  padding: 0.75rem;
+  padding: 0.8rem 1rem;
   background-color: #00C300;
   color: white;
   font-size: 1rem;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-weight: 500;
 }
-button:hover {
+button:hover:not(:disabled) { /* Add :not(:disabled) */
   background-color: #00a800;
+}
+button:disabled { /* Style for disabled buttons */
+    background-color: #ddd;
+    color: #888;
+    cursor: not-allowed;
+}
+
+/* Style for the clear button */
+#clear-button {
+    background-color: #ccc;
+    color: #333;
+}
+#clear-button:hover:not(:disabled) {
+    background-color: #bbb;
 }
 .subtext {
   font-size: 0.9rem;
   color: #666;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   text-align: center;
 }
-/* Style for the placeholder text inside canvas */
-.signature-placeholder {
-   position: absolute;
-   top: 10px;
-   left: 16px;
-   color: #aaa;
-   font-size: 0.9rem;
-   pointer-events: none; /* Make text non-interactive */
-   z-index: 1; /* Ensure it's above canvas content initially */
+/* Thin HR style if needed */
+hr.thin-hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 1rem 0; /* Consistent margin */
 }
-/* Style for the signature canvas itself */
-#signature-pad {
-    position: relative; /* Needed for absolute positioning of placeholder */
-    z-index: 2; /* Ensure drawing happens above placeholder */
-    display: block; /* Ensure it behaves like a block element */
-    width: 100%; /* Take full width of container */
-    height: 100%; /* Take full height of container */
-    cursor: crosshair; /* Indicate drawing area */
+/* Container for signature pad */
+.signature-pad-container {
+    margin-bottom: 1rem; /* Add space below signature */
 }
