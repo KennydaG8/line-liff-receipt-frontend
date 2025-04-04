@@ -3,32 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>租屋訂金收據（簽署版）</title> <link rel="preconnect" href="https://fonts.googleapis.com">
+    <title>租屋訂金收據（簽署版）</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h2>租屋訂金收據</h2> <div class="section-title">一、房東預填資料（不可修改）</div>
+        <h2>租屋訂金收據</h2>
+
+        <div class="section-title">一、房東預填資料（不可修改）</div>
         <label>房東 / 仲介姓名</label>
-        <input type="text" value="王小姐" readonly>
-
-        <label>租屋地址</label>
-        <input type="text" value="台北市大安區信義路123號" readonly>
-
-        <label>租期（起）</label>
-        <input type="text" value="2025/05/01" readonly>
-
-        <label>租期（迄）</label>
-        <input type="text" value="2026/04/30" readonly>
-
-        <label>月租金</label> <input type="text" value="NT$20,000" readonly>
-
-        <label>訂金金額</label> <input type="text" value="NT$10,000" readonly>
-
-        <div class="button-group">
+        <input type="text" id="landlordName_ro" value="王小姐" readonly> <label>租屋地址</label>
+        <input type="text" id="leaseAddress_ro" value="台北市大安區信義路123號" readonly> <label>租期（起）</label>
+        <input type="text" id="leaseStartDate_ro" value="2025/05/01" readonly> <label>租期（迄）</label>
+        <input type="text" id="leaseEndDate_ro" value="2026/04/30" readonly> <label>月租金</label>
+        <input type="text" id="monthlyRent_ro" value="NT$20,000" readonly> <label>訂金金額</label>
+        <input type="text" id="depositAmount_ro" value="NT$10,000" readonly> <div class="button-group">
             <button type="button" onclick="shareToLine()">房東填寫完畢 ➜LINE 傳送給租客</button>
         </div>
 
@@ -52,8 +44,11 @@
             <div class="terms-section">
                 <h2>三、承租人條款同意確認</h2>
                 <div class="clause-box">
-                    <ul style="padding-left: 1.2rem; margin: 0; font-size: 0.95rem; line-height: 1.6;">
-                        <li>訂金為保留租賃意願之用，一旦審核通過即成立契約預約。</li> <li>若於預定簽約日前，因甲方（承租人）之事由致不能履行時，訂金不得請求返還。</li> <li>若乙方同意後，因乙方之事由致不能履行時，應雙倍返還訂金。</li> </ul>
+                     <ul style="padding-left: 1.2rem; margin: 0; font-size: 0.95rem; line-height: 1.6;">
+                        <li>訂金為保留租賃意願之用，一旦審核通過即成立契約預約。</li>
+                        <li>若於預定簽約日前，因甲方（承租人）之事由致不能履行時，訂金不得請求返還。</li>
+                        <li>若乙方同意後，因乙方之事由致不能履行時，應雙倍返還訂金。</li>
+                    </ul>
                 </div>
                 <p style="font-size: smaller;">（請詳閱並勾選以下 4-7 項條款）</p>
                 <div class="checkbox-group">
@@ -67,7 +62,8 @@
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="term6-agree" name="term6-agree" required>
-                        <label for="term6-agree">本人了解，本訂金為租賃意願之擔保，並不代表已完成承租程序，仍需經出租人進行資料審核。</label> </div>
+                        <label for="term6-agree">本人了解，本訂金為租賃意願之擔保，並不代表已完成承租程序，仍需經出租人進行資料審核。</label>
+                    </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="term7-agree" name="term7-agree" required>
                         <label for="term7-agree">我了解本收據具《民法第 249 條》所定之法律效力，並同意受其約束。</label>
@@ -79,7 +75,7 @@
             <h2>承租人簽名確認:</h2>
             <div class="signature-pad-container">
                 <canvas id="signature-pad" style="border: 1px dashed #ccc; width: 100%; min-height: 150px; background-color: #fff;"></canvas>
-                <span class="signature-placeholder" id="signature-placeholder" style="position: absolute; top: 10px; left: 10px; color: #aaa; pointer-events: none; z-index: 1;">在此簽名</span>
+                 <span class="signature-placeholder" id="signature-placeholder" style="position: absolute; top: 10px; left: 10px; color: #aaa; pointer-events: none; z-index: 1;">在此簽名</span>
             </div>
 
             <div class="button-group">
@@ -88,10 +84,13 @@
             </div>
 
             <p id="status-message" style="min-height: 1.2em; margin-top: 1em; text-align: center;"></p>
-        </form> </div>
+        </form>
+
+    </div>
 
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script src="signature_pad.umd.min.js"></script> <script src="script.js"></script>
+    <script src="signature_pad.umd.min.js"></script>
+    <script src="script.js"></script>
 
 </body>
 </html>
