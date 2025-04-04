@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>房東資料輸入 & 連結產生</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        #result-area {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #e9f5e9; /* Light green background */
+            border: 1px solid #c8e6c9;
+            border-radius: 8px;
+        }
+        #generated-url {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            word-wrap: break-word; /* Wrap long URLs */
+            background-color: #fff;
+        }
+        #result-area button {
+            margin-right: 0.5rem;
+            padding: 0.5rem 0.8rem; /* Smaller buttons */
+            font-size: 0.9rem;
+        }
+        /* Hide result area initially */
+        #result-area {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>房東資料輸入 & 產生租客連結</h2>
+        <p class="subtext" style="margin-top:-0.5rem; margin-bottom:1.5rem;">請填寫所有房屋及訂金資訊，然後產生專屬連結分享給租客。</p>
+
+        <form id="landlord-form">
+
+            <div class="section-title">系統設定</div>
+            <div class="form-section">
+                <label for="pdfSaveFolderIdInput">Google Drive 資料夾 ID (用於儲存 PDF):<span style="color:red;">*</span></label>
+                <input type="text" id="pdfSaveFolderIdInput" placeholder="請貼上 Google Drive 資料夾 ID" required>
+                <small style="color:#777; font-size:0.8em;">這是 PDF 收據將儲存到的 Google Drive 資料夾的 ID。</small>
+             </div>
+
+            <div class="section-title">一、出租人/仲介資訊</div>
+            <div class="form-section">
+                <label for="landlordNameInput">房東 / 仲介姓名 (乙方):<span style="color:red;">*</span></label>
+                <input type="text" id="landlordNameInput" required>
+
+                <label for="landlordPhoneInput">聯絡電話 (乙方):</label>
+                <input type="tel" id="landlordPhoneInput">
+            </div>
+
+            <div class="section-title">二、租賃資訊</div>
+            <div class="form-section">
+                <label for="leaseAddressInput">租屋地址:<span style="color:red;">*</span></label>
+                <input type="text" id="leaseAddressInput" required>
+
+                <label for="leaseStartDateInput">租期（起）:<span style="color:red;">*</span></label>
+                <input type="text" id="leaseStartDateInput" placeholder="例如: 2025/05/01" required>
+
+                <label for="leaseEndDateInput">租期（迄）:<span style="color:red;">*</span></label>
+                <input type="text" id="leaseEndDateInput" placeholder="例如: 2026/04/30" required>
+
+                <label for="monthlyRentInput">月租金 (NT$):<span style="color:red;">*</span></label>
+                <input type="text" id="monthlyRentInput" placeholder="例如: 20000 (請填數字或含NT$)" required>
+
+                 <label for="rentPaymentMethodInput">租金繳納方式:</label>
+                 <input type="text" id="rentPaymentMethodInput" placeholder="例如: 月繳 / 匯款">
+
+                 <label for="remarksInput">備註 (顯示在 PDF):</label>
+                 <textarea id="remarksInput" rows="3" placeholder="此內容會顯示在 PDF 收據上"></textarea>
+            </div>
+
+             <div class="section-title">三、訂金資訊</div>
+            <div class="form-section">
+                 <label for="depositAmountInput">訂金金額 (NT$):<span style="color:red;">*</span></label>
+                 <input type="text" id="depositAmountInput" placeholder="例如: 10000 (請填數字或含NT$)" required>
+
+                 <label for="depositPaymentMethodInput">訂金付款方式:</label>
+                 <input type="text" id="depositPaymentMethodInput" placeholder="例如: 現金 / 匯款">
+
+                 <label for="depositPaymentDateInput">訂金付款日期:</label>
+                 <input type="text" id="depositPaymentDateInput" placeholder="例如: 2025/04/03">
+
+                 <label for="expectedSigningDateInput">預定簽約日:</label>
+                 <input type="text" id="expectedSigningDateInput" placeholder="例如: 2025/04/10">
+
+                 <label for="brokerageFeeAmountInput">仲介服務費金額 (NT$, 無則免填):</label>
+                 <input type="number" id="brokerageFeeAmountInput" inputmode="numeric" pattern="[0-9]*">
+            </div>
+
+            <div class="button-group">
+                <button type="button" id="generate-button">產生租客簽署連結</button>
+            </div>
+        </form>
+
+        <div id="result-area">
+            <h4>產生的連結：</h4>
+            <textarea id="generated-url" rows="4" readonly></textarea>
+            <button type="button" id="copy-button">複製連結</button>
+            <button type="button" id="share-generated-button">用 LINE 分享</button>
+            <p style="font-size:0.85em; color:#555; margin-top:0.5rem;">請複製此連結或透過 LINE 分享給您的租客進行簽署。</p>
+        </div>
+
+    </div><script src="landlord-script.js"></script>
+</body>
+</html>
