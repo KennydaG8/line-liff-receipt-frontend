@@ -1,118 +1,255 @@
-/* 基本的 body 樣式 */
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* 使用系統預設字體 */
-    padding: 15px; /* 頁面內邊距 */
-    background-color: #f4f4f4; /* 淡灰色背景 */
-    color: #333; /* 主要文字顏色 */
-    line-height: 1.6; /* 行高 */
-}
-
-/* 收據資訊區域樣式 */
-#receipt-info {
-    background-color: #fff; /* 白色背景 */
+/* --- 基本設定與變數 --- */
+:root {
+    --line-green: #00c300;
+    --line-green-dark: #009f00;
+    --light-gray: #f4f4f4;
+    --medium-gray: #ccc;
+    --dark-gray: #555;
+    --text-color: #333;
+    --white: #ffffff;
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --shadow-light: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* --- 全局樣式 --- */
+  html {
+    box-sizing: border-box;
+  }
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
+  
+  body {
+    font-family: 'Noto Sans TC', sans-serif; /* 設定主要字體 */
+    background-color: var(--light-gray);    /* 淺灰背景 */
+    color: var(--text-color);
+    line-height: 1.6;
+    margin: 0;
     padding: 15px;
-    border-radius: 8px; /* 圓角 */
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* 細微陰影 */
-}
-
-#receipt-info p {
-    margin: 5px 0; /* 段落間距 */
-}
-
-h1, h2 {
-    color: #1a1a1a; /* 深色標題 */
-    text-align: center; /* 標題置中 */
+  }
+  
+  /* --- 容器 (可選，用於限制寬度和居中) --- */
+  .container { /* 如果您想用容器包住內容，可以在 index.html 加入 <div class="container"> */
+    max-width: 600px; /* 最大寬度 */
+    margin: 20px auto; /* 上下邊距 20px，左右自動 (居中) */
+    background-color: var(--white);
+    padding: 20px 30px;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-light);
+  }
+  
+  /* --- 標題 --- */
+  h1 {
+    color: var(--line-green); /* 主標題用 LINE 綠 */
+    text-align: center;
+    font-weight: 700; /* 粗體 */
+    margin-top: 0;
+    margin-bottom: 5px;
+  }
+  h2 {
+    color: var(--dark-gray);
+    font-weight: 500; /* 中等粗細 */
+    margin-top: 30px;
     margin-bottom: 15px;
-}
-
-hr {
+    border-bottom: 1px solid var(--light-gray); /* 分區標題下加分隔線 */
+    padding-bottom: 5px;
+  }
+  
+  p {
+    margin: 0 0 10px 0; /* 段落下邊距 */
+  }
+  
+  hr {
     border: none;
-    border-top: 1px solid #ddd; /* 分隔線樣式 */
-    margin: 20px 0;
-}
-
-/* 簽名版的容器 Div */
-.signature-pad-container {
-    width: 95%; /* 寬度佔滿大部分螢幕 */
-    max-width: 500px; /* 最大寬度限制 */
-    height: 250px; /* 簽名區域的高度 */
-    border: 2px dashed #ccc; /* 虛線邊框，提示簽名區域 */
-    margin: 15px auto; /* 上下邊距，左右自動 (實現水平居中) */
-    background-color: #fff; /* 簽名區背景設為白色 */
-    position: relative; /* 為了讓內部的 canvas 能絕對定位 */
-    border-radius: 4px; /* 輕微圓角 */
-    touch-action: none; /* 在觸控螢幕上，防止簽名時觸發頁面滾動或縮放 */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-/* 簽名版的 Canvas 元素本身 */
-#signature-canvas {
-    /* 使用絕對定位填滿父容器 (.signature-pad-container) */
+    border-top: 1px solid #eee;
+    margin: 25px 0;
+  }
+  hr.thin-hr { /* 用於表單內部分隔 */
+      border-top: 1px solid #f0f0f0;
+      margin: 15px 0;
+  }
+  
+  /* --- 卡片/表單區塊樣式 --- */
+  .form-section {
+    background-color: var(--white);
+    padding: 15px 20px;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-light);
+    margin-bottom: 20px;
+  }
+  /* 如果您沒有用 .container，可以將樣式直接套用在 #input-form 和 .terms-section */
+  #input-form {
+     /* 如果沒用 .container，可以在這裡加背景色、圓角、陰影 */
+  }
+  
+  
+  /* --- 表單元素 --- */
+  label {
+    display: block; /* 讓 label 獨占一行 */
+    margin-bottom: 5px;
+    font-weight: 500; /* 中等粗細 */
+    color: var(--dark-gray);
+    font-size: 0.95em;
+  }
+  
+  input[type="text"],
+  input[type="tel"],
+  input[type="email"],
+  input[type="number"],
+  textarea {
+    width: 100%; /* 寬度填滿 */
+    padding: 10px 12px;
+    border: 1px solid var(--medium-gray);
+    border-radius: var(--border-radius-sm);
+    font-family: 'Noto Sans TC', sans-serif; /* 確保輸入框也用 Noto Sans */
+    font-size: 1em;
+    transition: border-color 0.2s ease;
+  }
+  
+  input:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--line-green); /* Focus 時邊框變綠 */
+    box-shadow: 0 0 0 2px rgba(0, 195, 0, 0.2); /* Focus 時加外光暈 */
+  }
+  
+  textarea {
+    resize: vertical; /* 允許垂直調整大小 */
+    min-height: 60px;
+  }
+  
+  /* 移除 number input 的上下箭頭 (部分瀏覽器) */
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type=number] {
+    -moz-appearance: textfield; /* Firefox */
+  }
+  
+  /* --- 條款區塊 --- */
+  .terms-section {
+    /* 如果沒用 .container，可以在這裡加背景色、圓角、陰影 */
+     padding: 15px 20px;
+     background-color: var(--white);
+     border-radius: var(--border-radius-md);
+     box-shadow: var(--shadow-light);
+     margin-top: 20px; /* 與上方 hr 或內容間隔 */
+  }
+  .terms-section h2{
+      border-bottom: none; /* 條款區標題不用底線 */
+      margin-top: 0;
+  }
+  
+  .terms-section ol {
+      list-style-position: inside;
+      padding-left: 0;
+      font-size: 0.9em; /* 條款字體稍小 */
+      color: var(--dark-gray);
+  }
+  
+  .terms-section li {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: flex-start;
+  }
+  
+  .terms-section input[type="checkbox"] {
+      margin-right: 8px;
+      margin-top: 3px; /* 微調垂直對齊 */
+      flex-shrink: 0;
+      accent-color: var(--line-green); /* 讓勾選框顏色是 LINE 綠 (支援的瀏覽器) */
+      cursor: pointer;
+  }
+  
+  .terms-section label {
+      cursor: pointer;
+      font-weight: normal; /* 條款文字不用粗體 */
+      color: inherit; /* 繼承 li 的顏色 */
+      font-size: 1em; /* 相對於 li 的大小 */
+  }
+  
+  /* --- 簽名版 --- */
+  .signature-pad-container {
+    width: 100%; /* 寬度填滿 */
+    max-width: 100%; /* 移除之前的 max-width 限制 */
+    height: 200px; /* 高度可調整 */
+    border: 1px solid var(--medium-gray); /* 邊框改為實線 */
+    margin: 15px auto;
+    background-color: var(--white);
+    position: relative;
+    border-radius: var(--border-radius-sm);
+    touch-action: none;
+  }
+  
+  #signature-canvas {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    cursor: crosshair; /* 將滑鼠指標變成十字形 */
-}
-
-/* 按鈕區域 */
-div > button { /* 選取作為 div 直接子元素的 button */
-    display: inline-block; /* 並排顯示 */
-    padding: 12px 20px;
-    margin: 10px 5px;
-    cursor: pointer; /* 滑鼠移上去時顯示手指指標 */
+    cursor: crosshair;
+  }
+  
+  /* --- 按鈕 --- */
+  div > button {
+    display: inline-block;
+    padding: 12px 25px; /* 加大 padding */
+    margin: 15px 5px 5px 5px; /* 加大上邊距 */
+    cursor: pointer;
     border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: bold;
-    transition: background-color 0.2s ease; /* 背景色變換動畫 */
-}
-
-/* 清除按鈕樣式 */
-#clear-button {
-    background-color: #aaa; /* 灰色背景 */
-    color: white;
-}
-#clear-button:hover {
-    background-color: #888; /* 滑鼠移上去時變深 */
-}
-
-/* 確認按鈕樣式 */
-#confirm-button {
-    background-color: #06C755; /* LINE 的綠色 */
-    color: white;
-}
-#confirm-button:hover {
-    background-color: #05a548; /* 滑鼠移上去時變深 */
-}
-
-/* 狀態訊息樣式 */
-#status-message {
+    border-radius: var(--border-radius-md); /* 按鈕也用圓角 */
+    font-size: 1.05em; /* 字體稍大 */
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.1s ease; /* 加入 transform 動畫 */
+    text-align: center;
+  }
+  div > button:active {
+      transform: scale(0.98); /* 按下時輕微縮小 */
+  }
+  
+  /* 確認按鈕 */
+  #confirm-button {
+    background-color: var(--line-green); /* LINE 綠 */
+    color: var(--white);
+  }
+  #confirm-button:hover {
+    background-color: var(--line-green-dark); /* 深綠 Hover */
+  }
+  #confirm-button:disabled { /* 禁用時的樣式 */
+      background-color: var(--medium-gray);
+      cursor: not-allowed;
+  }
+  
+  
+  /* 清除按鈕 */
+  #clear-button {
+    background-color: #aaa;
+    color: var(--white);
+  }
+  #clear-button:hover {
+    background-color: var(--dark-gray);
+  }
+  #clear-button:disabled {
+       background-color: #ddd;
+       cursor: not-allowed;
+  }
+  
+  
+  /* --- 狀態訊息 --- */
+  #status-message {
     margin-top: 20px;
-    font-weight: bold;
-    text-align: center; /* 文字置中 */
-    min-height: 1.6em; /* 預留空間避免跳動 */
-}
-
-.terms-section ol {
-    list-style: none; /* 移除預設的數字標號 (因為我們手動寫了) */
-    padding-left: 5px; /* 調整左邊距 */
-}
-
-.terms-section li {
-    margin-bottom: 10px; /* 增加列表項之間的間距 */
-    display: flex; /* 使用 Flexbox 來對齊 checkbox 和 label */
-    align-items: flex-start; /* 垂直對齊 (頂部對齊) */
-}
-
-.terms-section input[type="checkbox"] {
-    margin-right: 8px; /* checkbox 和文字之間的間距 */
-    margin-top: 2px; /* 稍微往下調一點對齊文字 */
-    flex-shrink: 0; /* 防止 checkbox 在空間不足時被壓縮 */
-}
-
-.terms-section label {
-    cursor: pointer; /* 讓 label 也有點擊指標 */
-}
+    font-weight: 500;
+    text-align: center;
+    min-height: 1.6em;
+  }
+  #status-message a { /* 讓狀態訊息中的連結也用綠色 */
+      color: var(--line-green-dark);
+      text-decoration: none;
+      font-weight: bold;
+  }
+  #status-message a:hover {
+      text-decoration: underline;
+  }
