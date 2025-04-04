@@ -112,10 +112,16 @@ document.addEventListener('DOMContentLoaded', () => {
             depositPaymentMethod: depositPaymentMethodEl.value.trim(),
             depositPaymentDate: depositPaymentDateEl.value.trim(),
             expectedSigningDate: expectedSigningDateEl.value.trim(),
+            // *** 新增：讀取服務費欄位 ***
+            brokerageFeeAmount: brokerageFeeAmountEl.value.trim(),
+            // brokerageFeeType: brokerageFeeTypeEl.value.trim(), // 如果有加 Type
         };
 
         // *** 基本檢查：確保必填欄位都有填寫 (這裡檢查所有欄位，除了 remarks) ***
-        const requiredKeys = Object.keys(formData).filter(key => key !== 'remarks');
+        // *** 修改：基本檢查 (假設服務費非必填) ***
+        const requiredKeys = Object.keys(formData).filter(key =>
+            key !== 'remarks' && key !== 'brokerageFeeAmount' // && key !== 'brokerageFeeType'
+        );
         const missingFields = requiredKeys.filter(key => !formData[key]);
 
         if (missingFields.length > 0) {

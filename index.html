@@ -62,25 +62,28 @@
 
         <h2>三、定金 資訊</h2>
         <div class="form-section">
-             <p>
+            <p>
                 <label for="depositAmount">定金金額 (NT$)：</label><br>
-                <input type="number" id="depositAmount" name="depositAmount" inputmode="numeric" pattern="[0-9]*" required> </p>
+                <input type="number" id="depositAmount" name="depositAmount" inputmode="numeric" pattern="[0-9]*" required>
+            </p>
             <p>
                 <label for="depositPaymentMethod">付款方式：</label><br>
                 <input type="text" id="depositPaymentMethod" name="depositPaymentMethod" placeholder="例如: 現金 / 匯款" required>
-                 </p>
+            </p>
             <p>
                 <label for="depositPaymentDate">付款日期：</label><br>
-                <input type="text" id="depositPaymentDate" name="depositPaymentDate" placeholder="例如: 2025/04/03 " required>
-                 </p>
+                <input type="text" id="depositPaymentDate" name="depositPaymentDate" placeholder="例如: 2025 年 04 月 03 日" required>
+            </p>
             <p>
                 <label for="expectedSigningDate">預定簽約日：</label><br>
-                <input type="text" id="expectedSigningDate" name="expectedSigningDate" placeholder="例如: 2025/04/10 " required>
-                 </p>
+                <input type="text" id="expectedSigningDate" name="expectedSigningDate" placeholder="例如: 2025 年 04 月 10 日" required>
+            </p>
+            <p>
+                <label for="brokerageFeeAmount">仲介服務費金額 (NT$)：</label><br>
+                <input type="number" id="brokerageFeeAmount" name="brokerageFeeAmount" inputmode="numeric" pattern="[0-9]*" placeholder="(無則免填)" >
+                </p>
         </div>
-
-         </div>
-    <hr>
+    
 
     <div class="terms-section">
         <h2>四、承租人 條款 同意 確認</h2>
@@ -89,7 +92,7 @@
              <li>若乙方（出租人/仲介）同意後無故不租賃，致不能履行時，應雙倍返還本筆定金。</li>
              <li>
                  <input type="checkbox" id="term4-agree" name="term4-agree" required>
-                 <label for="term4-agree">我了解並同意相關仲介服務費條款（如有）。</label>
+                 <label for="term4-agree">我了解並同意相關仲介服務費條款。</label>
                  </li>
              <li>
                  <input type="checkbox" id="term5-agree" name="term5-agree" required>
