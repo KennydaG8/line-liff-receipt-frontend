@@ -130,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- Readonly fields ---
             // Use default value '' if element not found or value is null/undefined
             landlordName: landlordNameRoEl?.value.trim() ?? '',
+            landlordPhone: document.getElementById('landlordPhone_ro')?.value.trim() ?? '',
             leaseAddress: leaseAddressRoEl?.value.trim() ?? '',
             leaseStartDate: leaseStartDateRoEl?.value.trim() ?? '',
             leaseEndDate: leaseEndDateRoEl?.value.trim() ?? '',
