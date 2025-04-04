@@ -1,254 +1,131 @@
-/* --- 基本設定與變數 --- */
-:root {
-  --line-green: #00c300; /* User Specified */
-  --line-green-dark: #009f00; /* User Specified Hover */
-  --light-gray: #f5f5f5; /* From Example */
-  --medium-gray: #ccc;
-  --border-gray: #ddd;
-  --text-gray: #666;
-  --dark-gray: #555;
-  --text-color: #333;
-  --white: #ffffff;
-  --border-radius-md: 10px;
-  --border-radius-lg: 16px;
-  --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-/* --- 全局樣式 --- */
-html {
-  box-sizing: border-box;
-}
-*, *:before, *:after {
-  box-sizing: inherit;
-}
-
 body {
   font-family: 'Noto Sans TC', sans-serif;
-  background-color: var(--light-gray);
-  color: var(--text-color);
-  line-height: 1.6;
+  background-color: #f5f5f5;
   margin: 0;
   padding: 1rem;
 }
-
-/* --- 主容器 --- */
 .container {
-  background: var(--white);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-light);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   padding: 1.5rem;
   max-width: 600px;
-  margin: 1rem auto;
+  margin: auto;
 }
-
-/* --- 標題 --- */
-h2 { /* Main title style from example */
-  color: var(--line-green);
+h2 {
+  color: #00C300;
   font-size: 1.5rem;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  font-weight: 700;
+  margin-bottom: 1rem;
 }
-
-.section-title { /* Sub-section titles */
+.section-title {
   font-weight: bold;
   margin-top: 1.5rem;
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.5rem;
   font-size: 1.1rem;
-  color: var(--dark-gray);
-  border-bottom: 1px solid var(--light-gray);
-  padding-bottom: 0.3rem;
 }
-
-p {
-  margin: 0 0 0.8rem 0;
-}
-
-hr {
-  border: none;
-  border-top: 1px solid #eee;
-  margin: 25px 0;
-}
-hr.thin-hr {
-    border-top: 1px solid #f0f0f0;
-    margin: 15px 0;
-}
-
-/* --- 表單區塊 --- */
-.form-section {
-  margin-bottom: 1.5rem;
-}
-
-/* --- 表單元素 --- */
 label {
   display: block;
   margin-top: 1rem;
   font-weight: 500;
-  font-size: 0.95em;
-  color: var(--dark-gray);
-  margin-bottom: 0.3rem;
 }
-
-input[type="text"],
-input[type="tel"],
-input[type="email"],
-input[type="number"],
-textarea {
+input, textarea {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.5rem;
   margin-top: 0.3rem;
-  border: 1px solid var(--border-gray);
-  border-radius: var(--border-radius-md);
-  font-family: 'Noto Sans TC', sans-serif;
-  font-size: 1rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  /* Ensure input/textarea take full width considering padding and border */
+  box-sizing: border-box;
+}
+input[readonly] {
+  background: #f1f1f1;
+  color: #555;
+}
+.signature-box {
+  border: 1px dashed #999;
+  /* height: 150px; */ /* Height is now set by the wrapper div in HTML */
+  border-radius: 8px;
+  margin-top: 0.5rem;
   background-color: #fff;
+  /* Ensure canvas fits within this box */
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
 }
-
-input:focus,
-textarea:focus {
-  outline: none;
-  border-color: var(--line-green);
-  box-shadow: 0 0 0 3px rgba(0, 195, 0, 0.15);
-}
-
-textarea {
-  resize: vertical;
-  min-height: 80px;
-}
-
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-input[type=number] {
-  -moz-appearance: textfield;
-}
-
-/* --- 條款區塊 --- */
 .clause-box {
   background-color: #f8f8f8;
-  border: 1px solid var(--border-gray);
+  border: 1px solid #ddd;
   padding: 1rem;
-  border-radius: var(--border-radius-md);
+  border-radius: 10px;
   margin-top: 1rem;
 }
-
 .checkbox-group {
   margin-top: 1rem;
   text-align: left;
 }
-
 .checkbox-group label {
   display: flex;
-  align-items: flex-start;
+  align-items: flex-start; /* Align checkbox and text nicely */
   gap: 0.5rem;
   justify-content: flex-start;
   line-height: 1.4;
   margin-bottom: 0.8rem;
-  word-break: break-word;
-  white-space: normal;
+  word-break: break-word; /* Prevent long text overflow */
+  white-space: normal; /* Allow text wrapping */
+  /* Reset label styles from global */
   font-weight: normal;
-  font-size: 0.95em;
-  cursor: pointer;
+  margin-top: 0; /* Reset top margin */
 }
-
 .checkbox-group input[type="checkbox"] {
-  flex-shrink: 0;
-  margin-top: 0.3rem;
-  width: 1.2rem;
-  height: 1.2rem;
-  cursor: pointer;
-  accent-color: var(--line-green);
+  flex-shrink: 0; /* Prevent checkbox shrinking */
+  margin-top: 0.3rem; /* Align checkbox vertically */
+  width: 1.2rem; /* Explicit size */
+  height: 1.2rem; /* Explicit size */
+  /* Reset input styles from global */
+  padding: 0;
+  border: initial;
+  border-radius: initial;
 }
-
-/* --- 簽名版 --- */
-.signature-box {
-  border: 1px dashed var(--medium-gray);
-  height: 150px;
-  border-radius: var(--border-radius-md);
-  margin-top: 0.5rem;
-  background-color: #fff;
-  position: relative;
-  width: 100%;
-  max-width: 100%;
-}
-
-#signature-pad { /* Canvas ID */
-  display: block;
-  width: 100%;
-  height: 100%;
-  cursor: crosshair;
-  border-radius: var(--border-radius-md);
-}
-
-/* --- 按鈕 --- */
 .button-group {
   margin-top: 2rem;
   display: flex;
   gap: 1rem;
-  flex-direction: column;
+  flex-direction: column; /* Stack buttons vertically */
 }
-
-button { /* Base button style */
-  padding: 0.85rem;
+button {
+  padding: 0.75rem;
+  background-color: #00C300;
   color: white;
-  font-size: 1.05rem;
-  font-family: 'Noto Sans TC', sans-serif;
-  font-weight: 500;
+  font-size: 1rem;
   border: none;
-  border-radius: var(--border-radius-md);
+  border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
 }
-
 button:hover {
-  background-color: var(--line-green-dark);
+  background-color: #00a800;
 }
-button:active {
-    transform: scale(0.98);
-}
-
-#confirm-button {
-    background-color: var(--line-green);
-}
-#confirm-button:hover {
-    background-color: var(--line-green-dark);
-}
-#confirm-button:disabled {
-    background-color: var(--medium-gray);
-    cursor: not-allowed;
-    transform: none;
-}
-
-#clear-button {
-  background-color: #aaa; /* Use gray from example */
-  color: white; /* Ensure text is white */
-}
-#clear-button:hover {
-  background-color: var(--dark-gray);
-}
-#clear-button:disabled {
-     background-color: #ddd;
-     cursor: not-allowed;
-     transform: none;
-}
-
-
-/* --- 其他 --- */
-.subtext, #status-message { /* Status message style */
+.subtext {
   font-size: 0.9rem;
-  color: var(--text-gray);
+  color: #666;
   margin-top: 1rem;
   text-align: center;
-  min-height: 1.4em;
 }
-#status-message a {
-    color: var(--line-green-dark);
-    text-decoration: none;
-    font-weight: bold;
+/* Style for the placeholder text inside canvas */
+.signature-placeholder {
+   position: absolute;
+   top: 10px;
+   left: 16px;
+   color: #aaa;
+   font-size: 0.9rem;
+   pointer-events: none; /* Make text non-interactive */
+   z-index: 1; /* Ensure it's above canvas content initially */
 }
-#status-message a:hover {
-    text-decoration: underline;
+/* Style for the signature canvas itself */
+#signature-pad {
+    position: relative; /* Needed for absolute positioning of placeholder */
+    z-index: 2; /* Ensure drawing happens above placeholder */
+    display: block; /* Ensure it behaves like a block element */
+    width: 100%; /* Take full width of container */
+    height: 100%; /* Take full height of container */
+    cursor: crosshair; /* Indicate drawing area */
 }

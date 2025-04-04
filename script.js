@@ -1,31 +1,23 @@
-// 使用嚴格模式，有助於捕捉潛在錯誤
+// 使用嚴格模式
 'use strict';
 
 // 等待 HTML 文件完全加載並解析完成後再執行
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 基本設定 ---
-    // ****** 請務必替換成您自己的 LIFF ID ******
+    // --- 基本設定 (來自舊腳本) ---
+    // ****** 請務必確認這是您正確的 LIFF ID ******
     const myLiffId = "2007188640-8vEWkonp";
-    // ****** 請務必替換成您未來後端接收簽名+收據資料的 API 網址 ******
+    // ****** 請務必確認這是您正確的後端 API 網址 ******
     const submitApiUrl = "https://line-liff-receipt-backend.onrender.com/api/submit-receipt";
-    // ****** 請務必替換成您未來後端提供收據資料的 API 基礎網址 ******
-    // 注意：後面的 /${id} 會在 fetchReceiptData 函式中加上
-    // const getReceiptApiBaseUrl = "https://line-liff-receipt-backend.onrender.com/api/receipts";'use strict';
 
-document.addEventListener('DOMContentLoaded', () => {
-    // --- API 位址設定 (指向您部署好的 Render 後端) ---
-    const submitApiUrl = "https://line-liff-receipt-backend.onrender.com/api/submit-receipt"; // **** 請確認這是您 Render 的後端網址 ****
+    // --- 獲取 DOM 元素 (來自舊腳本 - 請確保您的 index.html 有這些 ID) ---
+    const canvas = document.getElementById('signature-pad');
+    const clearButton = document.getElementById('clear-button');     // 假設清除按鈕 ID
+    const confirmButton = document.getElementById('confirm-button'); // 假設確認按鈕 ID
+    const statusMessage = document.getElementById('status-message'); // 假設狀態訊息 P 標籤 ID
 
-    // --- LIFF ID 設定 ---
-    const myLiffId = "2007188640-8vEWkonp"; // **** 請確認這是您的 LIFF ID ****
-
-    // --- 獲取 DOM 元素 ---
-    const canvas = document.getElementById('signature-pad'); // <--- 確認 HTML 中 canvas ID 是這個
-    const clearButton = document.getElementById('clear-button'); // <--- 確認 HTML 中清除按鈕 ID 是這個
-    const confirmButton = document.getElementById('confirm-button'); // <--- 確認 HTML 中提交按鈕 ID 是這個
-    const statusMessage = document.getElementById('status-message');
-    // *** 獲取所有輸入欄位元素 (請一一核對 ID 是否與新 index.html 一致) ***
+    // *** 獲取所有輸入欄位元素 (來自舊腳本 - 請確保您的 index.html 有這些 ID) ***
+    // (注意：這些 ID 可能與之前簡單版 HTML 不同，請核對！)
     const tenantNameEl = document.getElementById('tenantName');
     const tenantPhoneEl = document.getElementById('tenantPhone');
     const tenantEmailEl = document.getElementById('tenantEmail');
@@ -42,108 +34,157 @@ document.addEventListener('DOMContentLoaded', () => {
     const depositPaymentDateEl = document.getElementById('depositPaymentDate');
     const expectedSigningDateEl = document.getElementById('expectedSigningDate');
     const brokerageFeeAmountEl = document.getElementById('brokerageFeeAmount');
+    // 假設條款同意的 checkbox IDs (來自舊腳本 - 請確保您的 index.html 有這些 ID)
+    const term4Checkbox = document.getElementById('term4-agree');
+    const term5Checkbox = document.getElementById('term5-agree');
+    const term6Checkbox = document.getElementById('term6-agree');
+    const term7Checkbox = document.getElementById('term7-agree');
 
-    // --- 變數宣告 ---
-    let signaturePad;
-    let currentSaveFolderId = null;
+    // --- 變數宣告 (來自舊腳本) ---
+    let signaturePad; // 用於 SignaturePad 實例
+    let currentSaveFolderId = null; // 從 URL 讀取的 Folder ID
 
-    // --- 主要執行流程 ---
-    initializeLiffAndSignaturePad(myLiffId);
+    // --- 主要執行流程 (來自舊腳本) ---
+    // 確保 liff 和 SignaturePad 都已加載 (需要在 HTML 中引入)
+    if (typeof liff !== 'undefined' && typeof SignaturePad !== 'undefined') {
+        initializeLiffAndSignaturePad(myLiffId);
+    } else {
+        console.error("錯誤：LIFF SDK 或 SignaturePad 庫未成功加載。請檢查 index.html 中的 <script> 標籤。");
+        if(statusMessage) statusMessage.textContent = "錯誤：頁面初始化失敗，缺少必要組件。";
+        if(confirmButton) confirmButton.disabled = true;
+        if(clearButton) clearButton.disabled = true;
+    }
 
-    // --- 函式定義 ---
+    // --- 函式定義 (主要來自舊腳本) ---
 
     async function initializeLiffAndSignaturePad(liffId) {
-        statusMessage.textContent = "正在初始化...";
+        if(statusMessage) statusMessage.textContent = "正在初始化 LIFF...";
         try {
             await liff.init({ liffId: liffId });
-            statusMessage.textContent = "初始化成功！";
+            if(statusMessage) statusMessage.textContent = "LIFF 初始化成功！";
 
+            // 讀取 URL 參數 (來自舊腳本)
             const urlParams = new URLSearchParams(window.location.search);
             currentSaveFolderId = urlParams.get('pdfSaveFolderId');
 
             if (!currentSaveFolderId) {
                 console.error("URL 缺少 pdfSaveFolderId 參數！");
-                statusMessage.textContent = "錯誤：啟動連結不完整，缺少必要的參數 (Folder ID)。";
-                confirmButton.disabled = true;
-                clearButton.disabled = true;
+                if(statusMessage) statusMessage.textContent = "錯誤：啟動連結不完整，缺少必要的參數 (Folder ID)。";
+                if(confirmButton) confirmButton.disabled = true;
+                if(clearButton) clearButton.disabled = true;
                 return;
             }
             console.log("讀取到 Save Folder ID:", currentSaveFolderId);
 
+            // 初始化簽名版 (來自舊腳本)
             initializeSignaturePad();
 
-            statusMessage.textContent = "請填寫表單資訊並簽名確認。";
+            if(statusMessage) statusMessage.textContent = "請填寫表單資訊並簽名確認。";
 
         } catch (error) {
-             console.error("初始化時發生錯誤:", error);
-             statusMessage.textContent = `錯誤：${error.message}`;
-             confirmButton.disabled = true;
-             clearButton.disabled = true;
-        }
-    }
-
-    function initializeSignaturePad() {
-        try { // 加入 try-catch 觀察初始化錯誤
-            const ratio = Math.max(window.devicePixelRatio || 1, 1);
-            // Check if canvas exists before using it
-             if (!canvas) {
-                 console.error("錯誤：無法找到 Canvas 元素 (ID: signature-pad)");
-                 statusMessage.textContent = "錯誤：無法載入簽名區域。";
-                 confirmButton.disabled = true;
-                 clearButton.disabled = true;
-                 return;
-             }
-            canvas.width = canvas.offsetWidth * ratio;
-            canvas.height = canvas.offsetHeight * ratio;
-            const ctx = canvas.getContext("2d");
-             if (!ctx) {
-                  console.error("錯誤：無法獲取 Canvas 繪圖上下文。");
-                  statusMessage.textContent = "錯誤：無法初始化簽名區域。";
-                  confirmButton.disabled = true;
-                  clearButton.disabled = true;
-                  return;
-             }
-            ctx.scale(ratio, ratio);
-            signaturePad = new SignaturePad(canvas, { penColor: "rgb(0, 0, 0)" }); // 基本選項
-
-             // Check if buttons exist before adding listeners
-             if (clearButton) {
-                 clearButton.addEventListener('click', () => {
-                      if(signaturePad) {
-                           signaturePad.clear();
-                           console.log("簽名已清除");
-                      }
-                 });
-             } else {
-                  console.error("錯誤：找不到清除按鈕 (ID: clear-button)");
-             }
-
-             if (confirmButton) {
-                 confirmButton.addEventListener('click', handleSubmitSignature);
-             } else {
-                  console.error("錯誤：找不到確認按鈕 (ID: confirm-button)");
-             }
-
-            window.addEventListener('resize', resizeCanvas);
-            console.log("Signature Pad initialized.");
-        } catch (initError) {
-             console.error("Signature Pad 初始化時發生錯誤:", initError);
-             statusMessage.textContent = "錯誤：簽名功能初始化失敗。";
+             console.error("LIFF 初始化時發生錯誤:", error);
+             if(statusMessage) statusMessage.textContent = `錯誤：初始化失敗 (${error.message})。`;
              if(confirmButton) confirmButton.disabled = true;
              if(clearButton) clearButton.disabled = true;
         }
     }
 
+    function initializeSignaturePad() {
+        if (!canvas) {
+            console.error("錯誤：找不到 Canvas 元素 (ID: signature-pad)");
+            if(statusMessage) statusMessage.textContent = "錯誤：無法載入簽名區域。";
+            if(confirmButton) confirmButton.disabled = true;
+            if(clearButton) clearButton.disabled = true;
+            return;
+        }
+
+        try {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            const ctx = canvas.getContext("2d");
+             if (!ctx) {
+                  console.error("錯誤：無法獲取 Canvas 繪圖上下文。");
+                  if(statusMessage) statusMessage.textContent = "錯誤：無法初始化簽名區域。";
+                  if(confirmButton) confirmButton.disabled = true;
+                  if(clearButton) clearButton.disabled = true;
+                  return;
+             }
+            ctx.scale(ratio, ratio);
+            // 使用 SignaturePad 庫 (來自舊腳本)
+            signaturePad = new SignaturePad(canvas, {
+                penColor: "rgb(0, 0, 0)"
+                // 可以根據需要添加更多 SignaturePad 選項
+            });
+
+            // 設定按鈕事件監聽 (來自舊腳本，取代舊的 onclick)
+            if (clearButton) {
+                clearButton.addEventListener('click', () => {
+                     if(signaturePad) {
+                          signaturePad.clear(); // 使用 SignaturePad 的 clear 方法
+                          console.log("簽名已清除");
+                     }
+                });
+            } else {
+                 console.error("錯誤：找不到清除按鈕 (ID: clear-button)");
+            }
+
+            if (confirmButton) {
+                confirmButton.addEventListener('click', handleSubmitSignature); // 點擊確認按鈕時觸發提交
+            } else {
+                 console.error("錯誤：找不到確認按鈕 (ID: confirm-button)");
+            }
+
+            // 監聽視窗大小變化 (來自舊腳本)
+            window.addEventListener('resize', resizeCanvas);
+            console.log("Signature Pad initialized using SignaturePad library.");
+
+        } catch (initError) {
+             console.error("Signature Pad 初始化時發生錯誤:", initError);
+             if(statusMessage) statusMessage.textContent = "錯誤：簽名功能初始化失敗。";
+             if(confirmButton) confirmButton.disabled = true;
+             if(clearButton) clearButton.disabled = true;
+        }
+    }
+
+    // 調整畫布大小的函數 (使用 SignaturePad 的方法 - 來自舊腳本)
+    function resizeCanvas() {
+         if (!signaturePad) return; // 確保 signaturePad 已初始化
+         if (!canvas) return;      // 確保 canvas 存在
+
+        // 暫存當前簽名數據
+        const data = signaturePad.toData();
+
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        // 確保 offsetWidth/Height 不是 0
+        if (canvas.offsetWidth > 0 && canvas.offsetHeight > 0) {
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            canvas.getContext("2d").scale(ratio, ratio);
+
+             // 清除並從數據恢復簽名
+             signaturePad.clear();
+             signaturePad.fromData(data);
+             console.log("Canvas resized and signature restored.");
+        } else {
+             console.warn("Canvas dimensions are zero, skipping resize.");
+        }
+    }
+
+
+    // 提交簽名和表單數據的函數 (來自舊腳本)
     async function handleSubmitSignature() {
         if (!signaturePad) {
              alert("簽名功能尚未準備好。");
              return;
         }
+        // 使用 SignaturePad 的 isEmpty 方法
         if (signaturePad.isEmpty()) {
             alert("請承租人簽名確認！");
             return;
         }
 
+        // 收集表單數據 (來自舊腳本 - 確保元素存在)
         const formData = {
             tenantName: tenantNameEl ? tenantNameEl.value.trim() : '',
             tenantPhone: tenantPhoneEl ? tenantPhoneEl.value.trim() : '',
@@ -163,43 +204,56 @@ document.addEventListener('DOMContentLoaded', () => {
             brokerageFeeAmount: brokerageFeeAmountEl ? brokerageFeeAmountEl.value.trim() : '',
         };
 
+        // 檢查必填欄位 (來自舊腳本)
         const requiredKeys = Object.keys(formData).filter(key =>
+            // 排除非必填欄位
             key !== 'remarks' && key !== 'brokerageFeeAmount'
         );
         const missingFields = requiredKeys.filter(key => !formData[key]);
 
         if (missingFields.length > 0) {
-            alert(`請填寫所有必填欄位！(缺少: ${missingFields.map(id => document.querySelector(`label[for='${id}']`)?.textContent || id).join(', ')})`); // 顯示 Label 文字
+            // 嘗試獲取 label 文字以提供更友好的提示
+            const missingLabels = missingFields.map(id => {
+                const label = document.querySelector(`label[for='${id}']`);
+                return label ? label.textContent.replace('：', '') : id; // 清理 label 文字
+            }).join(', ');
+            alert(`請填寫所有必填欄位！(缺少: ${missingLabels})`);
             return;
         }
+
+        // 檢查 Folder ID (來自舊腳本)
         if (!currentSaveFolderId) {
              alert("錯誤：缺少必要的設定參數(Folder ID)，無法提交。");
              return;
         }
 
-        const term4Checked = document.getElementById('term4-agree')?.checked; // 加入安全檢查
-        const term5Checked = document.getElementById('term5-agree')?.checked;
-        const term6Checked = document.getElementById('term6-agree')?.checked;
-        const term7Checked = document.getElementById('term7-agree')?.checked;
+        // 檢查條款 Checkbox (來自舊腳本 - 確保元素存在)
+        const term4Checked = term4Checkbox?.checked;
+        const term5Checked = term5Checkbox?.checked;
+        const term6Checked = term6Checkbox?.checked;
+        const term7Checked = term7Checkbox?.checked;
 
         if (!term4Checked || !term5Checked || !term6Checked || !term7Checked) {
             alert("請勾選同意所有條款 (項目 4、5、6、7) 後再提交！");
             return;
         }
 
-        statusMessage.textContent = "正在處理並提交簽名...";
+        // 更新狀態並禁用按鈕 (來自舊腳本)
+        if(statusMessage) statusMessage.textContent = "正在處理並提交簽名...";
         if (confirmButton) confirmButton.disabled = true;
         if (clearButton) clearButton.disabled = true;
 
-
         try {
+            // 使用 SignaturePad 的 toDataURL 方法獲取簽名圖像 (來自舊腳本)
             const signatureImageBase64 = signaturePad.toDataURL('image/png');
+
+            // 準備發送到後端的 payload (來自舊腳本)
             const payload = {
                 ...formData,
                 signatureImage: signatureImageBase64,
                 pdfSaveFolderId: currentSaveFolderId,
                 submittedAt: new Date().toISOString(),
-                termsAgreed: { // 包含同意狀態
+                termsAgreed: {
                    term4: term4Checked,
                    term5: term5Checked,
                    term6: term6Checked,
@@ -209,252 +263,65 @@ document.addEventListener('DOMContentLoaded', () => {
 
             console.log("準備發送到後端的 Payload:", JSON.stringify(payload));
 
+            // 發送 Fetch 請求到後端 API (來自舊腳本)
             const response = await fetch(submitApiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
+            // 處理 API 回應 (來自舊腳本)
              if (!response.ok) {
                 let errorMsg = `提交失敗 (${response.status})`;
                 try {
                     const errorData = await response.json();
-                    errorMsg += `: ${errorData.error || JSON.stringify(errorData)}`; // 使用 error 欄位
+                    errorMsg += `: ${errorData.error || JSON.stringify(errorData)}`;
                 } catch (e) {
+                     // 如果回應不是 JSON，嘗試讀取文字
                      try { errorMsg += `: ${await response.text()}`; } catch (e2) {}
                 }
-                throw new Error(errorMsg);
+                throw new Error(errorMsg); // 拋出錯誤以便 catch 區塊處理
              }
+
+            // 成功處理
             const result = await response.json();
             console.log("Submission successful:", result);
             let successMsg = "資料與簽名已成功提交！";
             if (result.drive_web_view_link) {
-                 successMsg += ` <a href="${result.drive_web_view_link}" target="_blank">點此查看已產生的 PDF</a>`;
+                 // 顯示 PDF 連結 (來自舊腳本)
+                 successMsg += ` <a href="${result.drive_web_view_link}" target="_blank" rel="noopener noreferrer">點此查看已產生的 PDF</a>`;
             }
-            statusMessage.innerHTML = successMsg;
-            signaturePad.off(); // 禁用簽名版
-            // 按鈕保持禁用
+            if(statusMessage) statusMessage.innerHTML = successMsg; // 使用 innerHTML 以顯示連結
+            if(signaturePad) signaturePad.off(); // 禁用簽名版 (來自舊腳本)
+            // 按鈕保持禁用狀態
 
-            if (liff.isInClient()) { setTimeout(() => { liff.closeWindow(); }, 5000); } // 延長到 5 秒看連結
+            // 如果在 LINE App 內，延遲後關閉視窗 (來自舊腳本)
+            if (typeof liff !== 'undefined' && liff.isInClient()) {
+                setTimeout(() => {
+                    liff.closeWindow();
+                }, 5000); // 延長到 5 秒方便查看連結
+            }
 
         } catch (error) {
+             // 錯誤處理 (來自舊腳本)
              console.error("提交簽名時發生錯誤:", error);
-             statusMessage.textContent = `錯誤：提交失敗 (${error.message})。請稍後再試。`;
-             if (confirmButton) confirmButton.disabled = false; // 允許重試
+             if(statusMessage) statusMessage.textContent = `錯誤：提交失敗 (${error.message})。請稍後再試。`;
+             // 允許用戶重試
+             if (confirmButton) confirmButton.disabled = false;
              if (clearButton) clearButton.disabled = false;
         }
     }
 
-    function resizeCanvas() {
-         if (!signaturePad) return;
-        const ratio = Math.max(window.devicePixelRatio || 1, 1);
-        const canvasWidth = canvas.offsetWidth;
-        const canvasHeight = canvas.offsetHeight;
-        if (canvasWidth === 0 || canvasHeight === 0) { return; }
-        const data = signaturePad.toData();
-        canvas.width = canvasWidth * ratio;
-        canvas.height = canvasHeight * ratio;
-        canvas.getContext("2d").scale(ratio, ratio);
-        signaturePad.clear();
-        signaturePad.fromData(data);
-    }
+    // --- 不再需要的舊函數 (來自新分離的 script.js) ---
+    // window.clearSignature = ... (已被 clearButton 的 event listener 取代)
+    // window.submitForm = ... (已被 handleSubmitSignature 和 confirmButton 的 event listener 取代)
+    // window.shareToLine = ... (這個功能未包含在舊腳本中，如果仍需要，可以保留或重新整合)
+     window.shareToLine = () => {
+        console.warn("shareToLine function is basic and not part of the original API script.");
+        const url = encodeURIComponent(window.location.href);
+        const text = encodeURIComponent('這是您的租屋訂金表單連結，請填寫後簽名確認：');
+        window.location.href = `https://line.me/R/msg/text/?${text}%0A${url}`;
+     };
 
-}); // DOMContentLoaded End
-
-    // --- 獲取 DOM 元素 ---
-    const canvas = document.getElementById('signature-canvas');
-    const clearButton = document.getElementById('clear-button');
-    const confirmButton = document.getElementById('confirm-button');
-    const statusMessage = document.getElementById('status-message');
-    // *** 新增：獲取所有輸入欄位元素 ***
-    const tenantNameEl = document.getElementById('tenantName');
-    const tenantPhoneEl = document.getElementById('tenantPhone');
-    const tenantEmailEl = document.getElementById('tenantEmail');
-    const landlordNameEl = document.getElementById('landlordName');
-    const landlordPhoneEl = document.getElementById('landlordPhone');
-    const leaseAddressEl = document.getElementById('leaseAddress');
-    const leaseStartDateEl = document.getElementById('leaseStartDate');
-    const leaseEndDateEl = document.getElementById('leaseEndDate');
-    const monthlyRentEl = document.getElementById('monthlyRent');
-    const rentPaymentMethodEl = document.getElementById('rentPaymentMethod');
-    const remarksEl = document.getElementById('remarks');
-    const depositAmountEl = document.getElementById('depositAmount');
-    const depositPaymentMethodEl = document.getElementById('depositPaymentMethod');
-    const depositPaymentDateEl = document.getElementById('depositPaymentDate');
-    const expectedSigningDateEl = document.getElementById('expectedSigningDate');
-    const brokerageFeeAmountEl = document.getElementById('brokerageFeeAmount');
-    // const brokerageFeeTypeEl = document.getElementById('brokerageFeeType'); // 如果您有加 Type 欄位
-    // const repCompanyNameEl = document.getElementById('rep-company-name'); // 如果您之前有加這個，也要獲取
-
-    // --- 變數宣告 ---
-    let signaturePad;
-    // let currentLogoFileId = null; // 暫時不用 Logo ID
-    let currentSaveFolderId = null; // 用於儲存從 URL 讀取的 Save Folder ID
-
-    // --- 主要執行流程 ---
-    initializeLiffAndSignaturePad(myLiffId);
-
-    // --- 函式定義 ---
-
-    async function initializeLiffAndSignaturePad(liffId) {
-        statusMessage.textContent = "正在初始化...";
-        try {
-            await liff.init({ liffId: liffId });
-            statusMessage.textContent = "初始化成功！";
-
-            // *** 修改：只檢查 pdfSaveFolderId ***
-            const urlParams = new URLSearchParams(window.location.search);
-            currentSaveFolderId = urlParams.get('pdfSaveFolderId');
-
-            if (!currentSaveFolderId) { // 只檢查這個
-                console.error("URL 缺少 pdfSaveFolderId 參數！");
-                statusMessage.textContent = "錯誤：啟動連結不完整，缺少必要的參數 (Folder ID)。";
-                confirmButton.disabled = true;
-                clearButton.disabled = true;
-                return;
-            }
-            // console.log("讀取到 Logo File ID:", currentLogoFileId); // 註解掉
-            console.log("讀取到 Save Folder ID:", currentSaveFolderId);
-
-            initializeSignaturePad(); // 直接初始化
-
-            statusMessage.textContent = "請填寫表單資訊並簽名確認。"; // 更新提示
-
-        } catch (error) {
-             // ... (錯誤處理不變) ...
-        }
-    }
-
-    function initializeSignaturePad() {
-        // ... (初始化 SignaturePad 的程式碼不變) ...
-        const ratio = Math.max(window.devicePixelRatio || 1, 1);
-        canvas.width = canvas.offsetWidth * ratio;
-        canvas.height = canvas.offsetHeight * ratio;
-        canvas.getContext("2d").scale(ratio, ratio);
-        signaturePad = new SignaturePad(canvas, { /* ...options... */ });
-        clearButton.addEventListener('click', () => { /* ... */ });
-        confirmButton.addEventListener('click', handleSubmitSignature);
-        window.addEventListener('resize', resizeCanvas);
-        console.log("Signature Pad initialized.");
-    }
-
-    async function handleSubmitSignature() {
-        if (signaturePad.isEmpty()) {
-            alert("請承租人簽名確認！"); // 更新提示
-            return;
-        }
-
-        // *** 新增：從所有 input 欄位讀取資料 ***
-        const formData = {
-            // repCompanyName: repCompanyNameEl.value.trim(), // 如果您之前有加業務公司欄位
-            tenantName: tenantNameEl.value.trim(),
-            tenantPhone: tenantPhoneEl.value.trim(),
-            tenantEmail: tenantEmailEl.value.trim(),
-            landlordName: landlordNameEl.value.trim(),
-            landlordPhone: landlordPhoneEl.value.trim(),
-            leaseAddress: leaseAddressEl.value.trim(),
-            leaseStartDate: leaseStartDateEl.value.trim(),
-            leaseEndDate: leaseEndDateEl.value.trim(),
-            monthlyRent: monthlyRentEl.value.trim(),
-            rentPaymentMethod: rentPaymentMethodEl.value.trim(),
-            remarks: remarksEl.value.trim(),
-            depositAmount: depositAmountEl.value.trim(),
-            depositPaymentMethod: depositPaymentMethodEl.value.trim(),
-            depositPaymentDate: depositPaymentDateEl.value.trim(),
-            expectedSigningDate: expectedSigningDateEl.value.trim(),
-            // *** 新增：讀取服務費欄位 ***
-            brokerageFeeAmount: brokerageFeeAmountEl.value.trim(),
-            // brokerageFeeType: brokerageFeeTypeEl.value.trim(), // 如果有加 Type
-        };
-
-        // *** 基本檢查：確保必填欄位都有填寫 (這裡檢查所有欄位，除了 remarks) ***
-        // *** 修改：基本檢查 (假設服務費非必填) ***
-        const requiredKeys = Object.keys(formData).filter(key =>
-            key !== 'remarks' && key !== 'brokerageFeeAmount' // && key !== 'brokerageFeeType'
-        );
-        const missingFields = requiredKeys.filter(key => !formData[key]);
-
-        if (missingFields.length > 0) {
-            alert(`請填寫所有必填欄位！(缺少: ${missingFields.join(', ')})`);
-            return;
-        }
-        // 檢查 Folder ID
-        if (!currentSaveFolderId) {
-             alert("錯誤：缺少必要的設定參數(Folder ID)，無法提交。");
-             return;
-        }
-
-        // *** 新增：檢查條款 Checkbox 是否都已勾選 ***
-        const term4Checked = document.getElementById('term4-agree').checked;
-        const term5Checked = document.getElementById('term5-agree').checked;
-        const term6Checked = document.getElementById('term6-agree').checked;
-        const term7Checked = document.getElementById('term7-agree').checked;
-
-        if (!term4Checked || !term5Checked || !term6Checked || !term7Checked) {
-            alert("請勾選同意所有條款 (項目 4、5、6、7) 後再提交！");
-            return; // 如果有任何一項未勾選，停止提交
-        }
-        // *** 檢查結束 ***
-
-        statusMessage.textContent = "正在處理並提交簽名...";
-        confirmButton.disabled = true;
-        clearButton.disabled = true;
-
-        try {
-            const signatureImageBase64 = signaturePad.toDataURL('image/png');
-
-            // *** 修改：準備 payload，包含所有新欄位和 Folder ID ***
-            const payload = {
-                ...formData, // 將 formData 物件的所有屬性複製到 payload
-                signatureImage: signatureImageBase64,
-                // logoFileId: currentLogoFileId, // 暫時不傳 Logo ID
-                pdfSaveFolderId: currentSaveFolderId, // 傳送 Folder ID
-                submittedAt: new Date().toISOString(),
-                // 可選：如果後端要記錄同意狀態，可以加入
-                termsAgreed: {
-                   term4: term4Checked,
-                   term5: term5Checked,
-                   term6: term6Checked,
-                   term7: term7Checked,
-                   }
-            };
-
-            console.log("準備發送到後端的 Payload:", JSON.stringify(payload));
-
-            // *** Fetch 呼叫，確認 URL 正確，移除 ngrok header ***
-            const response = await fetch(submitApiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // 'ngrok-skip-browser-warning': 'true' // 已部署到 Render，移除此行
-                },
-                body: JSON.stringify(payload)
-            });
-
-            // ... (處理回應的邏輯不變) ...
-             if (!response.ok) { /* ... 錯誤處理 ... */ throw new Error(/*...*/); }
-            const result = await response.json();
-            console.log("Submission successful:", result);
-            let successMsg = "資料與簽名已成功提交！";
-            if (result.drive_web_view_link) {
-                 successMsg += ` <a href="${result.drive_web_view_link}" target="_blank">點此查看已產生的 PDF</a>`;
-            }
-            statusMessage.innerHTML = successMsg;
-            signaturePad.off();
-            if (liff.isInClient()) { setTimeout(() => { liff.closeWindow(); }, 3000); }
-
-
-        } catch (error) {
-            // ... (錯誤處理不變) ...
-             console.error("提交簽名時發生錯誤:", error);
-             statusMessage.textContent = `錯誤：提交失敗 (${error.message})。請稍後再試。`;
-             confirmButton.disabled = false;
-             clearButton.disabled = false;
-        }
-    }
-
-    function resizeCanvas() {
-        // ... (resizeCanvas 程式碼不變) ...
-    }
 
 }); // DOMContentLoaded End
