@@ -34,6 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const depositPaymentMethodEl = document.getElementById('depositPaymentMethod');
     const depositPaymentDateEl = document.getElementById('depositPaymentDate');
     const expectedSigningDateEl = document.getElementById('expectedSigningDate');
+    const brokerageFeeAmountEl = document.getElementById('brokerageFeeAmount');
+    // const brokerageFeeTypeEl = document.getElementById('brokerageFeeType'); // 如果您有加 Type 欄位
     // const repCompanyNameEl = document.getElementById('rep-company-name'); // 如果您之前有加這個，也要獲取
 
     // --- 變數宣告 ---
