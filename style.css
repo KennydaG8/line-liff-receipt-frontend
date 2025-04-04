@@ -1,255 +1,261 @@
 /* --- 基本設定與變數 --- */
 :root {
-    --line-green: #00c300;
-    --line-green-dark: #009f00;
-    --light-gray: #f4f4f4;
-    --medium-gray: #ccc;
-    --dark-gray: #555;
-    --text-color: #333;
-    --white: #ffffff;
-    --border-radius-sm: 4px;
-    --border-radius-md: 8px;
-    --shadow-light: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* --- 全局樣式 --- */
-  html {
-    box-sizing: border-box;
-  }
-  *, *:before, *:after {
-    box-sizing: inherit;
-  }
-  
-  body {
-    font-family: 'Noto Sans TC', sans-serif; /* 設定主要字體 */
-    background-color: var(--light-gray);    /* 淺灰背景 */
-    color: var(--text-color);
-    line-height: 1.6;
-    margin: 0;
-    padding: 15px;
-  }
-  
-  /* --- 容器 (可選，用於限制寬度和居中) --- */
-  .container { /* 如果您想用容器包住內容，可以在 index.html 加入 <div class="container"> */
-    max-width: 600px; /* 最大寬度 */
-    margin: 20px auto; /* 上下邊距 20px，左右自動 (居中) */
-    background-color: var(--white);
-    padding: 20px 30px;
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-light);
-  }
-  
-  /* --- 標題 --- */
-  h1 {
-    color: var(--line-green); /* 主標題用 LINE 綠 */
-    text-align: center;
-    font-weight: 700; /* 粗體 */
-    margin-top: 0;
-    margin-bottom: 5px;
-  }
-  h2 {
-    color: var(--dark-gray);
-    font-weight: 500; /* 中等粗細 */
-    margin-top: 30px;
-    margin-bottom: 15px;
-    border-bottom: 1px solid var(--light-gray); /* 分區標題下加分隔線 */
-    padding-bottom: 5px;
-  }
-  
-  p {
-    margin: 0 0 10px 0; /* 段落下邊距 */
-  }
-  
-  hr {
-    border: none;
-    border-top: 1px solid #eee;
-    margin: 25px 0;
-  }
-  hr.thin-hr { /* 用於表單內部分隔 */
-      border-top: 1px solid #f0f0f0;
-      margin: 15px 0;
-  }
-  
-  /* --- 卡片/表單區塊樣式 --- */
-  .form-section {
-    background-color: var(--white);
-    padding: 15px 20px;
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-light);
-    margin-bottom: 20px;
-  }
-  /* 如果您沒有用 .container，可以將樣式直接套用在 #input-form 和 .terms-section */
-  #input-form {
-     /* 如果沒用 .container，可以在這裡加背景色、圓角、陰影 */
-  }
-  
-  
-  /* --- 表單元素 --- */
-  label {
-    display: block; /* 讓 label 獨占一行 */
-    margin-bottom: 5px;
-    font-weight: 500; /* 中等粗細 */
-    color: var(--dark-gray);
-    font-size: 0.95em;
-  }
-  
-  input[type="text"],
-  input[type="tel"],
-  input[type="email"],
-  input[type="number"],
-  textarea {
-    width: 100%; /* 寬度填滿 */
-    padding: 10px 12px;
-    border: 1px solid var(--medium-gray);
-    border-radius: var(--border-radius-sm);
-    font-family: 'Noto Sans TC', sans-serif; /* 確保輸入框也用 Noto Sans */
-    font-size: 1em;
-    transition: border-color 0.2s ease;
-  }
-  
-  input:focus,
-  textarea:focus {
-    outline: none;
-    border-color: var(--line-green); /* Focus 時邊框變綠 */
-    box-shadow: 0 0 0 2px rgba(0, 195, 0, 0.2); /* Focus 時加外光暈 */
-  }
-  
-  textarea {
-    resize: vertical; /* 允許垂直調整大小 */
-    min-height: 60px;
-  }
-  
-  /* 移除 number input 的上下箭頭 (部分瀏覽器) */
-  input[type=number]::-webkit-inner-spin-button,
-  input[type=number]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  input[type=number] {
-    -moz-appearance: textfield; /* Firefox */
-  }
-  
-  /* --- 條款區塊 --- */
-  .terms-section {
-    /* 如果沒用 .container，可以在這裡加背景色、圓角、陰影 */
-     padding: 15px 20px;
-     background-color: var(--white);
-     border-radius: var(--border-radius-md);
-     box-shadow: var(--shadow-light);
-     margin-top: 20px; /* 與上方 hr 或內容間隔 */
-  }
-  .terms-section h2{
-      border-bottom: none; /* 條款區標題不用底線 */
-      margin-top: 0;
-  }
-  
-  .terms-section ol {
-      list-style-position: inside;
-      padding-left: 0;
-      font-size: 0.9em; /* 條款字體稍小 */
-      color: var(--dark-gray);
-  }
-  
-  .terms-section li {
-      margin-bottom: 10px;
-      display: flex;
-      align-items: flex-start;
-  }
-  
-  .terms-section input[type="checkbox"] {
-      margin-right: 8px;
-      margin-top: 3px; /* 微調垂直對齊 */
-      flex-shrink: 0;
-      accent-color: var(--line-green); /* 讓勾選框顏色是 LINE 綠 (支援的瀏覽器) */
-      cursor: pointer;
-  }
-  
-  .terms-section label {
-      cursor: pointer;
-      font-weight: normal; /* 條款文字不用粗體 */
-      color: inherit; /* 繼承 li 的顏色 */
-      font-size: 1em; /* 相對於 li 的大小 */
-  }
-  
-  /* --- 簽名版 --- */
-  .signature-pad-container {
-    width: 100%; /* 寬度填滿 */
-    max-width: 100%; /* 移除之前的 max-width 限制 */
-    height: 200px; /* 高度可調整 */
-    border: 1px solid var(--medium-gray); /* 邊框改為實線 */
-    margin: 15px auto;
-    background-color: var(--white);
-    position: relative;
-    border-radius: var(--border-radius-sm);
-    touch-action: none;
-  }
-  
-  #signature-canvas {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    cursor: crosshair;
-  }
-  
-  /* --- 按鈕 --- */
-  div > button {
-    display: inline-block;
-    padding: 12px 25px; /* 加大 padding */
-    margin: 15px 5px 5px 5px; /* 加大上邊距 */
-    cursor: pointer;
-    border: none;
-    border-radius: var(--border-radius-md); /* 按鈕也用圓角 */
-    font-size: 1.05em; /* 字體稍大 */
-    font-weight: 500;
-    transition: background-color 0.2s ease, transform 0.1s ease; /* 加入 transform 動畫 */
-    text-align: center;
-  }
-  div > button:active {
-      transform: scale(0.98); /* 按下時輕微縮小 */
-  }
-  
-  /* 確認按鈕 */
-  #confirm-button {
-    background-color: var(--line-green); /* LINE 綠 */
-    color: var(--white);
-  }
-  #confirm-button:hover {
-    background-color: var(--line-green-dark); /* 深綠 Hover */
-  }
-  #confirm-button:disabled { /* 禁用時的樣式 */
-      background-color: var(--medium-gray);
-      cursor: not-allowed;
-  }
-  
-  
-  /* 清除按鈕 */
-  #clear-button {
-    background-color: #aaa;
-    color: var(--white);
-  }
-  #clear-button:hover {
-    background-color: var(--dark-gray);
-  }
-  #clear-button:disabled {
-       background-color: #ddd;
-       cursor: not-allowed;
-  }
-  
-  
-  /* --- 狀態訊息 --- */
-  #status-message {
-    margin-top: 20px;
-    font-weight: 500;
-    text-align: center;
-    min-height: 1.6em;
-  }
-  #status-message a { /* 讓狀態訊息中的連結也用綠色 */
-      color: var(--line-green-dark);
-      text-decoration: none;
-      font-weight: bold;
-  }
-  #status-message a:hover {
-      text-decoration: underline;
-  }
+  --line-green: #00c300; /* LINE Green */
+  --line-green-dark: #009f00; /* Darker Green for Hover */
+  --light-gray: #f5f5f5;
+  --medium-gray: #ccc;
+  --border-gray: #ddd;
+  --text-gray: #666;
+  --dark-gray: #555;
+  --text-color: #333;
+  --white: #ffffff;
+  --border-radius-md: 10px; /* Increased from 8px */
+  --border-radius-lg: 16px; /* For container */
+  --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* --- 全局樣式 --- */
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: 'Noto Sans TC', sans-serif; /* 設定主要字體 */
+  background-color: var(--light-gray);    /* 淺灰背景 */
+  color: var(--text-color);
+  line-height: 1.6;
+  margin: 0;
+  padding: 1rem; /* Use rem for scalable spacing */
+}
+
+/* --- 主容器 --- */
+.container {
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-light);
+  padding: 1.5rem;
+  max-width: 600px;
+  margin: 1rem auto; /* Use auto margin for centering */
+}
+
+/* --- 標題 --- */
+h2 { /* Main title style from example */
+  color: var(--line-green);
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem; /* Increased margin */
+  text-align: center; /* Center main title */
+  font-weight: 700;
+}
+
+.section-title { /* Sub-section titles */
+  font-weight: bold;
+  margin-top: 1.5rem;
+  margin-bottom: 0.8rem; /* Increased margin */
+  font-size: 1.1rem;
+  color: var(--dark-gray);
+  border-bottom: 1px solid var(--light-gray); /* Add subtle separator */
+  padding-bottom: 0.3rem;
+}
+
+p {
+  margin: 0 0 0.8rem 0; /* Consistent paragraph margin */
+}
+
+hr { /* Standard hr */
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 25px 0;
+}
+hr.thin-hr { /* For inside form sections */
+    border-top: 1px solid #f0f0f0;
+    margin: 15px 0;
+}
+
+/* --- 表單區塊 --- */
+.form-section {
+  margin-bottom: 1.5rem; /* Space between sections */
+  /* Removed card styling here, container handles it */
+}
+
+/* --- 表單元素 --- */
+label {
+  display: block;
+  margin-top: 1rem;
+  font-weight: 500;
+  font-size: 0.95em; /* Slightly smaller label */
+  color: var(--dark-gray);
+  margin-bottom: 0.3rem; /* Space between label and input */
+}
+
+input[type="text"],
+input[type="tel"],
+input[type="email"],
+input[type="number"],
+textarea {
+  width: 100%;
+  padding: 0.75rem; /* Increased padding */
+  margin-top: 0.3rem;
+  border: 1px solid var(--border-gray); /* Lighter border */
+  border-radius: var(--border-radius-md); /* Match container radius */
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background-color: #fff; /* Ensure white background */
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--line-green);
+  box-shadow: 0 0 0 3px rgba(0, 195, 0, 0.15); /* Adjusted focus shadow */
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px; /* Slightly taller textarea */
+}
+
+/* Input readonly style from example (not used in current flow) */
+input[readonly] {
+  background: #f1f1f1;
+  color: #555;
+  cursor: not-allowed;
+}
+
+/* --- 條款區塊 --- */
+.clause-box { /* Style from example */
+  background-color: #f8f8f8;
+  border: 1px solid var(--border-gray);
+  padding: 1rem;
+  border-radius: var(--border-radius-md);
+  margin-top: 1rem;
+}
+
+.checkbox-group { /* Style from example */
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.checkbox-group label { /* Style from example */
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  justify-content: flex-start;
+  line-height: 1.4;
+  margin-bottom: 0.8rem;
+  word-break: break-word;
+  white-space: normal;
+  font-weight: normal; /* Normal weight for terms */
+  font-size: 0.95em;
+  cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] { /* Style from example */
+  flex-shrink: 0;
+  margin-top: 0.3rem;
+  width: 1.2rem; /* Slightly larger checkbox */
+  height: 1.2rem;
+  cursor: pointer;
+  accent-color: var(--line-green);
+}
+
+/* --- 簽名版 --- */
+.signature-box { /* Style from example */
+  border: 1px dashed var(--medium-gray); /* Dashed border */
+  height: 150px;
+  border-radius: var(--border-radius-md);
+  margin-top: 0.5rem;
+  background-color: #fff; /* Ensure white background */
+  position: relative; /* Needed for the placeholder text */
+  width: 100%;
+  max-width: 100%;
+}
+
+#signature-pad { /* Ensure canvas fills the box */
+  display: block; /* Remove extra space below canvas */
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
+
+/* Placeholder text style from example */
+.signature-box + span {
+   /* This selector might need adjustment if HTML changes */
+   /* Or style the span directly if it's always after */
+}
+
+
+/* --- 按鈕 --- */
+.button-group { /* Style from example */
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+  flex-direction: column; /* Buttons stacked vertically */
+}
+
+button { /* Base button style from example, adapted */
+  padding: 0.85rem; /* Slightly more padding */
+  background-color: var(--line-green);
+  color: white;
+  font-size: 1.05rem; /* Slightly larger font */
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 500;
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+button:hover { /* Use user's specified hover color */
+  background-color: var(--line-green-dark);
+}
+button:active {
+    transform: scale(0.98);
+}
+
+/* Specific button styles using IDs */
+#confirm-button {
+    /* Inherits base green style */
+}
+#confirm-button:hover {
+    background-color: var(--line-green-dark);
+}
+#confirm-button:disabled {
+    background-color: var(--medium-gray);
+    cursor: not-allowed;
+    transform: none;
+}
+
+#clear-button { /* Style from example, adapted */
+  background-color: #aaa;
+  color: white;
+}
+#clear-button:hover {
+  background-color: var(--dark-gray);
+}
+#clear-button:disabled {
+     background-color: #ddd;
+     cursor: not-allowed;
+     transform: none;
+}
+
+
+/* --- 其他 --- */
+.subtext, #status-message { /* Status message style from example */
+  font-size: 0.9rem;
+  color: var(--text-gray);
+  margin-top: 1rem;
+  text-align: center;
+  min-height: 1.4em; /* Adjust min-height based on font size */
+}
+#status-message a {
+    color: var(--line-green-dark);
+    text-decoration: none;
+    font-weight: bold;
+}
+#status-message a:hover {
+    text-decoration: underline;
+}
