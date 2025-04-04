@@ -87,10 +87,8 @@
     </div>
 
     <div class="section-title">五、承租人簽名確認</div>
-    <div style="position: relative; width: 100%; max-width: 100%;">
-      <canvas id="signature-pad" class="signature-box" style="width: 100%; max-width: 100%;"></canvas>
-      <span style="position: absolute; top: 10px; left: 16px; color: #aaa; font-size: 0.9rem;">請在此簽名</span>
-    </div>
+    <div style="position: relative; width: 100%; max-width: 100%;" class="signature-box">
+      <canvas id="signature-pad" style="width: 100%; max-width: 100%; display: block;"></canvas> </div>
 
     <div class="button-group">
       <button id="clear-button" style="background-color: #aaa; color: white;">清除簽名</button>
@@ -98,9 +96,5 @@
     </div>
     <p id="status-message" class="subtext">請填寫表單資訊並簽名確認。</p>
 
-  </div> <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <script src="signature_pad.umd.min.js"></script>
-  <script src="script.js"></script>
-
-</body>
+  </div> <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script> <script src="signature_pad.umd.min.js"></script> <script src="script.js"></script> </body>
 </html>
