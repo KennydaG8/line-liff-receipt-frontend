@@ -42,15 +42,15 @@ body {
 }
 
 /* --- 標題 --- */
-h2 {
-  color: var(--line-green); /* Use LINE Green for main titles */
+h2 { /* Main title style from example */
+  color: var(--line-green);
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
   text-align: center;
   font-weight: 700;
 }
 
-.section-title {
+.section-title { /* Sub-section titles */
   font-weight: bold;
   margin-top: 1.5rem;
   margin-bottom: 0.8rem;
@@ -160,14 +160,14 @@ input[type=number] {
   width: 1.2rem;
   height: 1.2rem;
   cursor: pointer;
-  accent-color: var(--line-green); /* Use LINE Green for checkbox */
+  accent-color: var(--line-green);
 }
 
 /* --- 簽名版 --- */
 .signature-box {
   border: 1px dashed var(--medium-gray);
-  height: 150px; /* Height from example */
-  border-radius: var(--border-radius-md); /* Use consistent radius */
+  height: 150px;
+  border-radius: var(--border-radius-md);
   margin-top: 0.5rem;
   background-color: #fff;
   position: relative;
@@ -175,12 +175,12 @@ input[type=number] {
   max-width: 100%;
 }
 
-#signature-pad { /* Canvas ID needs to match HTML */
+#signature-pad { /* Canvas ID */
   display: block;
   width: 100%;
   height: 100%;
   cursor: crosshair;
-  border-radius: var(--border-radius-md); /* Inherit border radius */
+  border-radius: var(--border-radius-md);
 }
 
 /* --- 按鈕 --- */
@@ -191,7 +191,7 @@ input[type=number] {
   flex-direction: column;
 }
 
-button {
+button { /* Base button style */
   padding: 0.85rem;
   color: white;
   font-size: 1.05rem;
@@ -204,15 +204,14 @@ button {
 }
 
 button:hover {
-  background-color: var(--line-green-dark); /* Use user's hover color */
+  background-color: var(--line-green-dark);
 }
 button:active {
     transform: scale(0.98);
 }
 
-/* Specific button styles using IDs */
 #confirm-button {
-    background-color: var(--line-green); /* Use user's main color */
+    background-color: var(--line-green);
 }
 #confirm-button:hover {
     background-color: var(--line-green-dark);
@@ -224,7 +223,8 @@ button:active {
 }
 
 #clear-button {
-  background-color: #aaa; /* Keep gray or choose another secondary color */
+  background-color: #aaa; /* Use gray from example */
+  color: white; /* Ensure text is white */
 }
 #clear-button:hover {
   background-color: var(--dark-gray);
@@ -237,14 +237,7 @@ button:active {
 
 
 /* --- 其他 --- */
-.subtext { /* Base style from example */
-  font-size: 0.9rem;
-  color: var(--text-gray);
-  margin-top: 1rem;
-  text-align: center;
-}
-
-#status-message { /* Apply same style */
+.subtext, #status-message { /* Status message style */
   font-size: 0.9rem;
   color: var(--text-gray);
   margin-top: 1rem;
