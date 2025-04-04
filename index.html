@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>租屋訂金收據（簽署版 - 業主版面）</title>
+    <title>租屋訂金收據（簽署版 - 業主版面v2）</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,15 +16,19 @@
         <h2>租屋訂金收據</h2>
 
         <div class="section-title">一、房屋資訊（由房東提供）</div>
-        <div class="display-info-section"> <p><span class="display-label">房東/仲介姓名:</span> <span id="display_landlordName">(載入中...)</span></p>
-            <p><span class="display-label">連絡電話:</span> <span id="display_landlordPhone">(載入中...)</span></p>
-            <p><span class="display-label">租屋地址:</span> <span id="display_leaseAddress">(載入中...)</span></p>
-            <p><span class="display-label">租期:</span> <span id="display_leaseStartDate">(載入中...)</span> 至 <span id="display_leaseEndDate">(載入中...)</span></p>
-            <p><span class="display-label">月租金:</span> <span id="display_monthlyRent">(載入中...)</span></p>
-             <p><span class="display-label">訂金金額:</span> <span id="display_depositAmount">(載入中...)</span></p>
-             <p><span class="display-label">訂金付款方式:</span> <span id="display_depositPaymentMethod">(載入中...)</span></p>
-             <p><span class="display-label">訂金付款日期:</span> <span id="display_depositPaymentDate">(載入中...)</span></p>
-             <p><span class="display-label">預定簽約日:</span> <span id="display_expectedSigningDate">(載入中...)</span></p>
+        <div class="display-info-section">
+            <p><span class="display-label">房東/仲介姓名:</span> <span class="display-value" id="display_landlordName"></span></p>
+            <p><span class="display-label">連絡電話:</span> <span class="display-value" id="display_landlordPhone"></span></p>
+            <p><span class="display-label">租屋地址:</span> <span class="display-value" id="display_leaseAddress"></span></p>
+            <p><span class="display-label">租期:</span> <span class="display-value" id="display_leaseStartDate"></span> 至 <span class="display-value" id="display_leaseEndDate"></span></p>
+            <p><span class="display-label">月租金:</span> <span class="display-value" id="display_monthlyRent"></span></p>
+             <p><span class="display-label">訂金金額:</span> <span class="display-value" id="display_depositAmount"></span></p>
+             <p><span class="display-label">訂金付款方式:</span> <span class="display-value" id="display_depositPaymentMethod"></span></p>
+             <p><span class="display-label">訂金付款日期:</span> <span class="display-value" id="display_depositPaymentDate"></span></p>
+             <p><span class="display-label">預定簽約日:</span> <span class="display-value" id="display_expectedSigningDate"></span></p>
+              <p><span class="display-label">租金繳納方式:</span> <span class="display-value" id="display_rentPaymentMethod"></span></p>
+              <p><span class="display-label">仲介服務費:</span> <span class="display-value" id="display_brokerageFeeAmount"></span></p>
+              <div class="remarks-display"><span class="display-label">備註:</span> <span id="display_remarks"></span></div>
         </div>
 
         <input type="hidden" id="landlordName">
@@ -38,8 +42,10 @@
         <input type="hidden" id="depositPaymentMethod">
         <input type="hidden" id="depositPaymentDate">
         <input type="hidden" id="expectedSigningDate">
-        <input type="hidden" id="brokerageFeeAmount"> <input type="hidden" id="remarks"> <div class="button-group" style="margin-top: 1rem; margin-bottom: 1.5rem;">
-             <button type="button" onclick="shareCurrentDataToLine()">房東準備連結 ➜ LINE 分享給租客</button>
+        <input type="hidden" id="brokerageFeeAmount">
+        <input type="hidden" id="remarks">
+
+        <div class="button-group" id="share-button-group" style="margin-top: 1rem; margin-bottom: 1.5rem; display: none;"> <button type="button" onclick="shareCurrentDataToLine()">轉發此預填連結給租客 ➜ LINE</button>
          </div>
 
 
@@ -85,7 +91,7 @@
                         <label for="term7-agree">我了解本收據具《民法第249條》所定之法律效力，並同意受其約束。</label>
                     </div>
                 </div>
-            </div>
+             </div>
 
 
             <div class="section-title">四、承租人簽名確認</div>

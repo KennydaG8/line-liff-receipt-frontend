@@ -1,4 +1,4 @@
-/* Styles extracted from landlord's HTML */
+/* Styles extracted from landlord's HTML, plus additions */
 body {
   font-family: 'Noto Sans TC', sans-serif;
   background-color: #f5f5f5;
@@ -48,31 +48,50 @@ textarea {
   box-sizing: border-box;
   font-size: 1rem;
 }
-/* Style for the hidden inputs (they are hidden by default) */
+/* Style for the hidden inputs */
 input[type="hidden"] {
-    display: none;
+    display: none; /* They are not visible */
 }
-/* Style for the display area */
+/* Style for the display area where landlord info is shown */
 .display-info-section {
-    background-color: #f9f9f9; /* Light background */
-    border: 1px solid #eee;
+    background-color: #f9f9f9; /* Light background to differentiate */
+    border: 1px solid #e0e0e0; /* Softer border */
     border-radius: 8px;
-    padding: 0.8rem 1rem;
+    padding: 1rem; /* More padding */
     margin-bottom: 1rem;
     font-size: 0.95rem;
-    line-height: 1.6;
+    line-height: 1.7; /* Improved readability */
 }
 .display-info-section p {
-    margin: 0.4rem 0; /* Space between lines */
-    display: flex; /* Align label and value */
-    flex-wrap: wrap; /* Allow wrapping */
+    margin: 0.5rem 0; /* Consistent spacing */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline; /* Align text baseline */
 }
 .display-label {
     font-weight: 500;
     color: #333;
-    margin-right: 0.5em; /* Space after label */
-    flex-shrink: 0; /* Prevent label from shrinking */
+    margin-right: 0.6em; /* Space after label */
+    flex-shrink: 0;
+    min-width: 90px; /* Minimum width for labels */
 }
+.display-value {
+    color: #444; /* Slightly lighter than label */
+}
+/* Style for remarks display area */
+.remarks-display {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed #eee; /* Separator for remarks */
+}
+.remarks-display span {
+     display: block; /* Label and value on separate lines */
+}
+.remarks-display .display-value {
+    margin-top: 0.2em;
+    white-space: pre-wrap; /* Preserve line breaks in remarks */
+}
+
 /* Signature Box styles */
 .signature-box {
   border: 1px dashed #999;
@@ -130,16 +149,17 @@ button {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, opacity 0.2s ease; /* Added opacity transition */
   font-weight: 500;
 }
 button:hover:not(:disabled) {
   background-color: #00a800;
 }
 button:disabled {
-    background-color: #ddd;
-    color: #888;
-    cursor: not-allowed;
+    background-color: #ddd !important; /* Ensure override */
+    color: #888 !important;
+    cursor: not-allowed !important;
+    opacity: 0.6; /* Dim disabled buttons */
 }
 #clear-button {
     background-color: #ccc;
