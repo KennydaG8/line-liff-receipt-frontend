@@ -1,3 +1,4 @@
+/* Styles extracted from landlord's HTML */
 body {
   font-family: 'Noto Sans TC', sans-serif;
   background-color: #f5f5f5;
@@ -10,18 +11,18 @@ body {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   padding: 1.5rem;
   max-width: 600px;
-  margin: 1rem auto; /* Added margin */
+  margin: 1rem auto;
 }
 h2 {
-  color: #00C300; /* Original Green */
+  color: #00C300;
   font-size: 1.5rem;
   margin-bottom: 1rem;
-  text-align: center; /* Center align */
+  text-align: center;
 }
 .section-title {
   font-weight: bold;
   margin-top: 1.5rem;
-  margin-bottom: 0.8rem; /* Consistent margin */
+  margin-bottom: 0.8rem;
   font-size: 1.1rem;
   color: #555;
   border-bottom: 1px solid #eee;
@@ -29,15 +30,15 @@ h2 {
 }
 label {
   display: block;
-  margin-top: 1rem; /* Space above label */
-  margin-bottom: 0.3rem; /* Space below label */
+  margin-top: 1rem;
+  margin-bottom: 0.3rem;
   font-weight: 500;
   color: #444;
 }
 input[type="text"],
 input[type="tel"],
 input[type="email"],
-input[type="number"], /* Added number type */
+input[type="number"],
 textarea {
   width: 100%;
   padding: 0.75rem;
@@ -47,20 +48,38 @@ textarea {
   box-sizing: border-box;
   font-size: 1rem;
 }
-/* Removed readonly styles as fields are now editable,
-   but can be added back if needed for specific display */
-/* input[readonly] {
-   background: #f1f1f1;
-   color: #555;
-   cursor: not-allowed;
-} */
+/* Style for the hidden inputs (they are hidden by default) */
+input[type="hidden"] {
+    display: none;
+}
+/* Style for the display area */
+.display-info-section {
+    background-color: #f9f9f9; /* Light background */
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+.display-info-section p {
+    margin: 0.4rem 0; /* Space between lines */
+    display: flex; /* Align label and value */
+    flex-wrap: wrap; /* Allow wrapping */
+}
+.display-label {
+    font-weight: 500;
+    color: #333;
+    margin-right: 0.5em; /* Space after label */
+    flex-shrink: 0; /* Prevent label from shrinking */
+}
+/* Signature Box styles */
 .signature-box {
   border: 1px dashed #999;
-  /* height: 150px; */ /* Controlled by wrapper */
   border-radius: 8px;
   margin-top: 0.5rem;
-  background-color: #fff; /* White background */
-  touch-action: none; /* Prevent scroll */
+  background-color: #fff;
+  touch-action: none;
 }
 .clause-box {
   background-color: #f8f8f8;
@@ -86,9 +105,8 @@ textarea {
   margin-top: 0;
   cursor: pointer;
 }
-/* Style for the div containing checkbox+label if needed */
 .checkbox-item {
-    margin-bottom: 0.5rem; /* Add space between items */
+    margin-bottom: 0.5rem;
 }
 .checkbox-group input[type="checkbox"] {
   flex-shrink: 0;
@@ -115,16 +133,14 @@ button {
   transition: background-color 0.2s ease;
   font-weight: 500;
 }
-button:hover:not(:disabled) { /* Add :not(:disabled) */
+button:hover:not(:disabled) {
   background-color: #00a800;
 }
-button:disabled { /* Style for disabled buttons */
+button:disabled {
     background-color: #ddd;
     color: #888;
     cursor: not-allowed;
 }
-
-/* Style for the clear button */
 #clear-button {
     background-color: #ccc;
     color: #333;
@@ -138,13 +154,12 @@ button:disabled { /* Style for disabled buttons */
   margin-top: 1.5rem;
   text-align: center;
 }
-/* Thin HR style if needed */
 hr.thin-hr {
     border: none;
     border-top: 1px solid #eee;
-    margin: 1rem 0; /* Consistent margin */
+    margin: 1rem 0;
 }
-/* Container for signature pad */
 .signature-pad-container {
-    margin-bottom: 1rem; /* Add space below signature */
+    margin-bottom: 1rem;
 }
+/* Placeholder is handled by inline style in HTML */
